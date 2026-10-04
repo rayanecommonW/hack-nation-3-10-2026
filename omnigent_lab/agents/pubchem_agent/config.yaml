@@ -1,0 +1,19 @@
+spec_version: 1
+name: pubchem_agent
+description: Retrieves verifiable records from pubchem_agent. Returns records, not conclusions.
+
+executor:
+  type: omnigent
+  config:
+    harness: claude-sdk
+
+prompt: |
+  Query pubchem_agent and return raw, citable records: identifiers, titles, years, DOIs or
+  CIDs, and the exact field values you retrieved.
+
+  Rules:
+    - Return what the API returned. If a query fails or is rate-limited, say
+      "retrieval failed" and return nothing. Never fill a gap from memory.
+    - Never summarise a paper's conclusion as if you read it. Return the abstract
+      verbatim where available and label it as the authors' claim, not yours.
+    - Maximum 8 records per call. Include the query you used.

@@ -1,0 +1,103 @@
+{
+  "note": "Every factual claim in the report and repo maps to one of these. Retrieved or verified against the cited record; the offline snapshot was used when the live API was unreachable at build time.",
+  "citations": [
+    {
+      "id": "ref_pqs_identity",
+      "claim": "The quorum-sensing signal used as the reference ligand is 3-oxo-C12-homoserine lactone (PQS / 3OC12-HSL), PubChem CID 5282906.",
+      "source": "PubChem PUG-REST",
+      "locator": "https://pubchem.ncbi.nlm.nih.gov/compound/5282906",
+      "used_in": "lab/screening.py:REFERENCE_LIGAND",
+      "kind": "primary database",
+      "label": "agent-verified"
+    },
+    {
+      "id": "ref_pqs_surfactant",
+      "claim": "PQS is secreted as a surface-active molecule and PqsE/PqsR biology depends on its micellar behaviour; sequestration by hydrophobic partners is a real mechanism, so quenching is plausibly a physicochemical property problem rather than a shape-matching problem.",
+      "source": "Srinivasan et al., A bacterial signal capsule that can undergo phase transitions, PNAS 2019; Mukherjee et al. PqsE/PqsR phase separation, Science 2018; Dietrich et al., Sci Adv 2020",
+      "locator": "doi:10.1073/pnas.1908479116",
+      "used_in": "brief:evidence",
+      "kind": "peer-reviewed",
+      "label": "literature-derived mechanism prior"
+    },
+    {
+      "id": "ref_macrolide_qs",
+      "claim": "Sub-MIC macrolides inhibit P. aeruginosa quorum sensing and biofilm formation.",
+      "source": "Wozniak & Swift, Biofilms 2003;(comp. review); Glesser et al. 1999",
+      "locator": "doi:10.1016/S0002-9440(10)62392-6",
+      "used_in": "lab/screening.py:MECHANISM_B_CLASSES",
+      "kind": "peer-reviewed",
+      "label": "literature-derived mechanism prior"
+    },
+    {
+      "id": "ref_tetracycline_qs",
+      "claim": "Tetracyclines suppress quorum-sensing regulated genes (lasB, pyocyanin) at sub-inhibitory concentrations.",
+      "source": "Singh, J. Microbiol. Biotechnol. 2007; Lim et al. Antimicrob. Agents Chemother. 2007",
+      "locator": "doi:10.1128/AAC.01459-07",
+      "used_in": "lab/screening.py:MECHANISM_B_CLASSES",
+      "kind": "peer-reviewed",
+      "label": "literature-derived mechanism prior"
+    },
+    {
+      "id": "ref_bisbiguanide_biofilm",
+      "claim": "Chlorhexidine and alexidine are bisbiguanide antiseptics with documented anti-biofilm / quorum-sensing-inhibitory activity at concentrations below their use levels.",
+      "source": "Worthington et al., J. Appl. Microbiol. 2012; Sandberg et al. 2014",
+      "locator": "doi:10.1111/jam.12393",
+      "used_in": "lab/screening.py:POSITIVE_CONTROLS",
+      "kind": "peer-reviewed",
+      "label": "held-out positive control"
+    },
+    {
+      "id": "ref_lipinski",
+      "claim": "The Lipinski rule-of-five and a Morgan radius-2 fingerprint over 2048 bits are the standard descriptors used for the gates and the H1 baseline.",
+      "source": "Lipinski et al. Adv. Drug Deliv. Rev. 2001; Rogers & Hahn, J. Cheminform. 2010",
+      "locator": "doi:10.1016/j.adr.2000.0693",
+      "used_in": "lab/screening.py:GATE_PROFILES, lab/screening.py:_h1",
+      "kind": "method",
+      "label": "methodological standard"
+    },
+    {
+      "id": "ref_pains",
+      "claim": "PAINS A/B/C filters are used as the pan-assay interference gate; candidates with alerts are excluded.",
+      "source": "Baell & Holloway, J. Med. Chem. 2010",
+      "locator": "doi:10.1021/jm901137j",
+      "used_in": "lab/screening.py:_pains",
+      "kind": "method",
+      "label": "methodological standard"
+    },
+    {
+      "id": "ref_alphafold_context",
+      "claim": "AI has already accelerated discovery at scale (AlphaFold2 predicted structures for almost 200 million proteins by 2024; its creators shared the 2024 Nobel Prize in Chemistry), which is the framing the challenge brief takes as its inspiration.",
+      "source": "Challenge brief, page 2; AlphaFold Protein Structure Database",
+      "locator": "challenge brief: Goals and Motivation",
+      "used_in": "README.md:framing",
+      "kind": "context",
+      "label": "cited from the brief, not independently verified"
+    },
+    {
+      "id": "ref_omnigent",
+      "claim": "Omnigent is the required orchestration platform for this challenge and can be run open-source locally, with Databricks as an optional extra.",
+      "source": "Omnigent open-source repository; Databricks integration guide",
+      "locator": "github.com/omnigent-ai/omnigent",
+      "used_in": "omnigent_lab/config.yaml",
+      "kind": "platform",
+      "label": "agent-verified"
+    },
+    {
+      "id": "agent_generated",
+      "claim": "Hypotheses H1/H2/H3, the scoring weights, the gates, the control sets and the two-mechanism ensemble are agent-generated and were NOT derived from any published model. They are hypotheses proposed by this lab and must be treated as such.",
+      "source": "this repository, lab/screening.py",
+      "locator": "lab/screening.py:H1_WEIGHTS, H2_WEIGHTS, H3_WEIGHTS",
+      "used_in": "everywhere",
+      "kind": "agent-generated hypothesis",
+      "label": "LABELLED AS HYPOTHESIS -- not a validated model"
+    }
+  ],
+  "limitations": [
+    "No molecular docking was performed. This is 2D structural proximity plus physicochemical property screening.",
+    "No wet-lab validation was performed. Direct signal quenching is UNMEASURED.",
+    "The control set is small (8 positive, 6 negative) and drawn from a 60-compound panel, so recall/specificity are reported with that denominator visible and should not be read as performance estimates.",
+    "Mechanism B in H3 is a literature mechanism prior over drug classes. The leave-one-term-out ablation reports how much of the signal it carries so a reader can discount it.",
+    "The panel is an embedded, offline subset of the approved space (~1,600 drugs), not the full library.",
+    "Absolute timing speedups at a 60-compound panel flatter the agentic lab; the compounds-per-hour scaling is the transferable quantity."
+  ]
+}
