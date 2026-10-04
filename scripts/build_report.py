@@ -17,45 +17,64 @@ RECORD = REPO / "research_record.json"
 OUT = REPO / "demo" / "index.html"
 
 CSS = """
-:root{--bg:#08080c;--panel:#101018;--line:#22222e;--fg:#e8e8f0;--dim:#8b8ba0;
---cyan:#4ee0d0;--amber:#ffb454;--red:#ff5c6c;--green:#5ce08a;--violet:#a78bfa;}
+/* Same design system as index.html: cool paper ground, pyocyanin teal, one
+   accent for supported and rust for refuted. The first version of this page was
+   a dark terminal theme, which made the site look like two different products. */
+@font-face{font-family:'Newsreader';font-style:normal;font-weight:300 700;
+  src:url(/assets/fonts/Newsreader-300-latin.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Newsreader';font-style:italic;font-weight:300 700;
+  src:url(/assets/fonts/Newsreader-300i-latin.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Plex Sans';src:url(/assets/fonts/IBMPlexSans-400-latin.woff2) format('woff2');font-display:swap}
+/* IBM Plex Sans ships as a variable font, so one file covers 400 and 600. */
+@font-face{font-family:'Plex Sans';font-weight:400 700;src:url(/assets/fonts/IBMPlexSans-400-latin.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Plex Mono';src:url(/assets/fonts/IBMPlexMono-400-latin.woff2) format('woff2');font-display:swap}
+:root{
+  --ground:#EFF0F2;--surface:#FBFBFC;--ink:#10141A;--ink-2:#454C56;--ink-3:#868E99;
+  --rule:#D5D9DE;--rule-soft:#E6E8EB;
+  --teal:#00696B;--rust:#A23A20;--gold:#836209;
+  --serif:'Newsreader',Georgia,serif;--sans:'Plex Sans',system-ui,sans-serif;--mono:'Plex Mono',ui-monospace,monospace;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);
-font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;padding:28px 32px}
-h1{font-size:19px;margin:0 0 2px;letter-spacing:-.02em}
-h2{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);
-margin:30px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
-.sub{color:var(--dim);margin-bottom:8px;font-size:13px}
-.q{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);
-padding:12px 14px;border-radius:4px;margin:10px 0 4px}
-.grid{display:grid;gap:12px}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 15px/1.6 var(--sans);
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:34px 28px 70px}
+h1{font:400 30px/1.2 var(--serif);letter-spacing:-.018em;margin:0 0 4px}
+h2{font:500 12.5px/1.3 var(--sans);color:var(--ink-2);margin:34px 0 12px;
+  border-bottom:1px solid var(--ink);padding-bottom:8px}
+.sub{color:var(--ink-3);font-size:13px;margin-bottom:6px}
+.q{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--teal);
+  padding:14px 17px;border-radius:3px;margin:12px 0 6px;font:300 19px/1.45 var(--serif)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font:600 11px/1.3 var(--sans);color:var(--ink-2);
+  padding:0 14px 8px 0;border-bottom:1px solid var(--ink)}
+td{padding:10px 14px 10px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+th:last-child,td:last-child{padding-right:0}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:13px;padding-right:18px;white-space:nowrap}
+.b{display:inline-block;padding:1px 8px;border-radius:999px;font:600 11px var(--sans)}
+.b.SUPPORTED{background:#E0EEEE;color:var(--teal)}
+.b.REFUTED{background:#F7E9E5;color:var(--rust)}
+.b.INCONCLUSIVE{background:#F3EBD9;color:var(--gold)}
+.mono{color:var(--ink-2);font-family:var(--mono);font-size:12.5px}
+.hit{color:var(--teal);font-weight:600}
+.note{color:var(--ink-2);font-size:13.5px;border-left:2px solid var(--rule);
+  padding-left:14px;margin:11px 0;max-width:70ch}
+.warn{border-left-color:var(--gold)}
+code{background:#E6E8EB;padding:1px 5px;border-radius:2px;font-family:var(--mono);font-size:12px}
+.st{border:1px solid var(--rule);background:var(--surface);border-radius:3px;padding:8px 12px;font-size:12.5px}
+.st b{color:var(--teal);font-weight:600;font-family:var(--mono)}
+.ar{color:var(--ink-3)}
+.grid{display:grid;gap:14px}
 .g4{grid-template-columns:repeat(4,1fr)}
 .g2{grid-template-columns:1fr 1fr}
-@media(max-width:900px){.g4,.g2{grid-template-columns:1fr 1fr}}
-.k{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:13px 14px}
-.k .n{font-size:26px;font-weight:600;letter-spacing:-.02em}
-.k .l{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
-.k .x{color:var(--dim);font-size:11px;margin-top:5px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;color:var(--dim);font-weight:500;font-size:11px;text-transform:uppercase;
-letter-spacing:.1em;padding:6px 8px;border-bottom:1px solid var(--line)}
-td{padding:6px 8px;border-bottom:1px solid #16161f;vertical-align:top}
-.b{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;letter-spacing:.04em}
-.SUPPORTED{background:#0f2b1b;color:var(--green);border:1px solid #1d5c37}
-.REFUTED{background:#2b0f14;color:var(--red);border:1px solid #5c1d26}
-.INCONCLUSIVE{background:#2b200f;color:var(--amber);border:1px solid #5c421d}
-.mono{color:var(--dim)}
-.hit{color:var(--green)}.miss{color:var(--red)}.fp{color:var(--amber)}
-.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
-.st{border:1px solid var(--line);background:var(--panel);border-radius:4px;
-padding:5px 9px;font-size:12px}
-.st b{color:var(--cyan);font-weight:600}
-.ar{color:var(--dim)}
-.note{color:var(--dim);font-size:12px;border-left:2px solid var(--line);padding-left:11px;margin:9px 0}
-.warn{border-left-color:var(--amber)}
-code{background:#16161f;padding:1px 5px;border-radius:3px;font-size:12px}
-ul{margin:6px 0;padding-left:19px}li{margin:3px 0}
-footer{color:var(--dim);font-size:11px;margin-top:34px;border-top:1px solid var(--line);padding-top:12px}
+.k{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:14px 16px}
+.k .n{font:400 24px/1 var(--mono);letter-spacing:-.025em}
+.k .l{font:600 10.5px/1.3 var(--sans);color:var(--ink-2);margin-top:8px;letter-spacing:.04em}
+.k .x{color:var(--ink-3);font-size:12px;margin-top:5px}
+footer{color:var(--ink-3);font-size:12.5px;margin-top:38px;border-top:1px solid var(--rule);padding-top:14px}
+a{color:var(--teal);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.g4,.g2{grid-template-columns:1fr}}
 """
 
 
@@ -95,9 +114,9 @@ def main() -> None:
 <title>PQS Lab — agentic scientific discovery</title><style>{CSS}</style></head><body>""")
 
     p.append("<h1>Agentic scientific discovery lab</h1>")
-    p.append(f'<div class="sub">Databricks Omnigent &middot; Hack Nation 3 Oct 2026 &middot; '
-             f'record: {esc(rec["created_utc"])} &middot; '
-             f'{len(rec["handoffs"])} handoffs &middot; {len(rec["experiments"])} experiments</div>')
+    p.append(f'<div class="sub">Databricks Omnigent. Hack Nation, 3 October 2026. '
+             f'Run recorded {esc(rec["created_utc"])}, '
+             f'{len(rec["handoffs"])} handoffs across {len(rec["experiments"])} experiments.</div>')
     p.append(f'<div class="q">{esc(brief["question"])}</div>')
     p.append(f'<div class="note warn"><b>Bottleneck attacked.</b> {esc(brief["bottleneck_attacked"])}</div>')
 
@@ -205,7 +224,7 @@ def main() -> None:
     p.append(f'<div class="q"><b>{esc(ne["proposal"])}</b>'
              f'<div class="sub" style="margin:8px 0 0">Why: {esc(ne["why"])}</div>'
              f'<div class="sub" style="margin:5px 0 0">Falsifier: {esc(ne["falsifier"])}</div>'
-             f'<div class="sub" style="margin:5px 0 0;color:var(--amber)">{esc(ne["status"])}</div></div>')
+             f'<div class="sub" style="margin:5px 0 0;color:var(--gold)">{esc(ne["status"])}</div></div>')
     p.append(f'<div class="note"><b>Path to 10&times;.</b> {esc(acc["what_would_reach_10x"])}</div>')
 
     p.append("<h2>Governance</h2>")
@@ -223,7 +242,7 @@ def main() -> None:
     for c in res["citations"]["citations"]:
         p.append(f'<div class="note"><b>{esc(c["id"])}</b> — {esc(c["claim"][:210])}<br>'
                  f'<span class="mono">{esc(c["source"])} · {esc(c["locator"])} '
-                 f'· <span style="color:var(--amber)">{esc(c["label"])}</span></span></div>')
+                 f'· <span style="color:var(--gold)">{esc(c["label"])}</span></span></div>')
 
     p.append(f'<footer>Generated from evidence/results.json + research_record.json by '
              f'scripts/build_report.py. Agents: {esc(", ".join(a[0] for a in agents))}. '

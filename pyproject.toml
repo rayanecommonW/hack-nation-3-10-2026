@@ -19,6 +19,8 @@ entrypoint = "index:app"
 # service and the site read at runtime, so they are included explicitly.
 include = [
   "index.html",
+  "assets/fonts.css",
+  "assets/fonts/*.woff2",
   "evidence/results.json",
   "evidence/citations.json",
   "demo/index.html",

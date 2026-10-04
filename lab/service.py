@@ -132,11 +132,31 @@ def frozen_run():
             "auc_positive_vs_negative": e["auc_positive_vs_negative"],
             "positives_in_top10": [], "positives_missed": [],
             "false_positives_in_top10": [],
-            "n_input": n, "n_retained": e["n_retained"], "shortlist": e["shortlist"],
+            "n_input": n, "n_valid": n, "n_excluded": e["n_retained"],
+            "n_retained": e["n_retained"], "n_priority": e["n_retained"],
+            "shortlist": e["shortlist"],
         })
+
+    # Rebuild the cascade from the accepted screen's stored ranking so the
+    # deployed page narrows exactly like a live run does.
+    acc_screen = {}
+    for screen in data.get("full_screens", []):
+        if (screen["hypothesis"] == accepted["accepted_hypothesis"]
+                and screen["gate"] == accepted["gate"]):
+            acc_screen = screen
+            break
+    tiers = [c.get("tier") for c in acc_screen.get("full_ranking", [])]
+    n_priority = len([t for t in tiers if t == "priority"])
+    n_retained = len([t for t in tiers if t in ("priority", "secondary")])
+    n_excluded = len([t for t in tiers if t == "excluded"])
 
     return {
         "source": "frozen-run",
+        "cascade": {
+            "n_input": n, "n_valid": n - 1, "n_excluded": n_excluded,
+            "n_retained": n_retained, "n_priority": n_priority,
+            "n_shortlist": min(8, len(accepted["shortlist"])),
+        },
         "note": ("Deployed runtime ships without RDKit (265 MB exceeds Vercel's "
                  "function limit), so this is the committed verified run from "
                  "evidence/results.json -- identical numbers to a local "

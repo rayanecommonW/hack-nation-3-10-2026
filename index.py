@@ -65,15 +65,17 @@ def _status(code):
 def _static(start_response, relpath, ctype):
     path = os.path.join(_ROOT, relpath)
     if not os.path.isfile(path):
-        start_response(_status(404), SECURITY + [("Content-Type", "text/plain"),
-                                                 ("Content-Length", "9")])
+        start_response(_status(404), SECURITY + [("Content-Type", "text/plain")])
         return [b"not found"]
     with open(path, "rb") as fh:
         data = fh.read()
+    # Documents and stylesheets must revalidate, otherwise an edit is invisible
+    # for the whole TTL and you debug a stale page. Font binaries are content
+    # addressed by nothing in particular, so they get a short TTL too; this is a
+    # demo, not a CDN, and correctness beats a few hundred kilobytes.
     start_response(_status(200), SECURITY + [
         ("Content-Type", ctype),
-        ("Content-Length", str(len(data))),
-        ("Cache-Control", "public, max-age=3600"),
+        ("Cache-Control", "no-cache"),
     ])
     return [data]
 
@@ -113,7 +115,6 @@ def app(environ, start_response):
             ("X-Robots-Tag", "noindex"),
             ("Access-Control-Allow-Origin", "*"),
         ]
-        headers.append(("Content-Length", str(len(body))))
         start_response(_status(response["statusCode"]), headers)
         return [body]
 
@@ -134,13 +135,15 @@ def app(environ, start_response):
                          ".json": "application/json", ".png": "image/png",
                          ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
                          ".css": "text/css", ".js": "text/javascript",
-                         ".svg": "image/svg+xml", ".md": "text/markdown; charset=utf-8"}
+                         ".svg": "image/svg+xml", ".md": "text/markdown; charset=utf-8",
+                         ".woff2": "font/woff2", ".woff": "font/woff",
+                         ".yaml": "text/yaml; charset=utf-8",
+                         ".py": "text/x-python; charset=utf-8"}
                 return _static(start_response, target,
                                kinds.get(ext, "application/octet-stream"))
         if path == "/favicon.ico":
             start_response(_status(204), SECURITY)
             return [b""]
 
-    start_response(_status(404), SECURITY + [
-        ("Content-Type", "text/plain"), ("Content-Length", "9")])
+    start_response(_status(404), SECURITY + [("Content-Type", "text/plain")])
     return [b"not found"]

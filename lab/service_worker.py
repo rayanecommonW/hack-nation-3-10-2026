@@ -44,7 +44,10 @@ def main() -> int:
             "positives_missed": cp["positive_controls"]["missed"],
             "false_positives_in_top10": cp["negative_controls"]["false_positives_in_top10"],
             "n_input": result["n_input"],
+            "n_valid": result["n_valid"],
+            "n_excluded": result["n_excluded"],
             "n_retained": result["n_retained"],
+            "n_priority": len([c for c in result["full_ranking"] if c["tier"] == "priority"]),
             "shortlist": [c["name"] for c in result["shortlist"][:8]],
         })
 
@@ -52,8 +55,18 @@ def main() -> int:
     final = screening.run_screen(accepted["hypothesis"], gate=accepted["gate"])
     elapsed = time.perf_counter() - t0
 
+    cascade = {
+        "n_input": final["n_input"],
+        "n_valid": final["n_valid"],
+        "n_excluded": final["n_excluded"],
+        "n_retained": final["n_retained"],
+        "n_priority": len([c for c in final["full_ranking"] if c["tier"] == "priority"]),
+        "n_shortlist": min(8, len(final["shortlist"])),
+    }
+
     payload = {
         "source": "live",
+        "cascade": cascade,
         "ran_on": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "wall_clock_s": round(elapsed, 3),
         "compounds_screened": final["n_input"],

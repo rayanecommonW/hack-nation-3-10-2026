@@ -57,7 +57,7 @@
     },
     {
       "id": "ref_pains",
-      "claim": "PAINS A/B/C filters are used as the pan-assay interference gate; candidates with alerts are excluded.",
+      "claim": "PAINS A, B and C filters are used as the pan-assay interference gate; candidates with alerts are excluded.",
       "source": "Baell & Holloway, J. Med. Chem. 2010",
       "locator": "doi:10.1021/jm901137j",
       "used_in": "lab/screening.py:_pains",
@@ -75,7 +75,7 @@
     },
     {
       "id": "ref_omnigent",
-      "claim": "Omnigent is the required orchestration platform for this challenge and can be run open-source locally, with Databricks as an optional extra.",
+      "claim": "This challenge requires Omnigent for orchestration, and it runs open source locally, and Databricks is optional.",
       "source": "Omnigent open-source repository; Databricks integration guide",
       "locator": "github.com/omnigent-ai/omnigent",
       "used_in": "omnigent_lab/config.yaml",
