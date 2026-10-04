@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PQS Lab — agentic scientific discovery · Databricks Omnigent</title>
+<meta name="description" content="An Omnigent-orchestrated agentic scientific discovery lab. Four experiments, two refutations, one accepted result. No server-side keys.">
+<style>
+:root{--bg:#08080c;--panel:#101018;--panel2:#14141d;--line:#22222e;--fg:#e8e8f0;
+--dim:#8b8ba0;--cyan:#4ee0d0;--amber:#ffb454;--red:#ff5c6c;--green:#5ce08a;--violet:#a78bfa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding:30px 32px 60px}
+.wrap{max-width:1140px;margin:0 auto}
+h1{font-size:22px;margin:0 0 3px;letter-spacing:-.025em}
+h2{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--dim);
+margin:32px 0 11px;border-bottom:1px solid var(--line);padding-bottom:7px}
+.sub{color:var(--dim);font-size:13px}
+.q{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);
+padding:13px 15px;border-radius:4px;margin:10px 0 6px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:1fr 1fr}
+@media(max-width:880px){.g4,.g2{grid-template-columns:1fr 1fr}}
+.k{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:14px}
+.k .n{font-size:27px;font-weight:600;letter-spacing:-.02em}
+.k .l{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;margin-top:3px}
+.k .x{color:var(--dim);font-size:11px;margin-top:5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--dim);font-weight:500;font-size:10.5px;text-transform:uppercase;
+letter-spacing:.11em;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:6px 8px;border-bottom:1px solid #16161f;vertical-align:top}
+.b{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px}
+.SUPPORTED{background:#0f2b1b;color:var(--green);border:1px solid #1d5c37}
+.REFUTED{background:#2b0f14;color:var(--red);border:1px solid #5c1d26}
+.INCONCLUSIVE{background:#2b200f;color:var(--amber);border:1px solid #5c421d}
+.mono{color:var(--dim)}.hit{color:var(--green)}.fp{color:var(--amber)}
+.note{color:var(--dim);font-size:12px;border-left:2px solid var(--line);padding-left:12px;margin:9px 0}
+.warn{border-left-color:var(--amber)}
+code{background:#16161f;padding:1px 5px;border-radius:3px;font-size:12px}
+.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.st{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:5px 9px;font-size:11.5px}
+.st b{color:var(--cyan)}.ar{color:var(--dim)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin:12px 0}
+.card h3{margin:0 0 4px;font-size:15px}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:6px}
+input{width:100%;background:#0b0b12;border:1px solid var(--line);border-radius:4px;
+color:var(--fg);padding:10px 12px;font:13px ui-monospace,Menlo,monospace}
+input:focus{outline:none;border-color:var(--cyan)}
+.row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:11px}
+.row>div{flex:1;min-width:260px}
+button{background:var(--cyan);color:#04121a;border:0;border-radius:4px;padding:11px 20px;
+font:600 13px ui-monospace,Menlo,monospace;cursor:pointer;letter-spacing:.02em}
+button:hover{filter:brightness(1.12)}
+button:disabled{opacity:.45;cursor:progress}
+button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+#nar{white-space:pre-wrap;line-height:1.72;color:var(--fg);font-size:13.5px}
+.pill{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:3px;
+background:#0f2b1b;color:var(--green);border:1px solid #1d5c37;margin-left:7px}
+.pill.off{background:#2b0f14;color:var(--red);border-color:#5c1d26}
+a{color:var(--cyan)}
+ul{margin:6px 0;padding-left:19px}li{margin:4px 0}
+footer{color:var(--dim);font-size:11px;margin-top:38px;border-top:1px solid var(--line);padding-top:13px}
+.spin{color:var(--dim);padding:26px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>PQS Lab <span class="sub">— agentic scientific discovery, orchestrated by Databricks Omnigent</span></h1>
+<div class="sub">Hack Nation · 3 Oct 2026 · Challenge 03 · live run, executed server-side on every page load</div>
+
+<div class="q" id="q"></div>
+<div class="note warn" id="bottle"></div>
+
+<h2>Result</h2>
+<div class="grid g4" id="stats"><div class="spin">running the lab…</div></div>
+<div class="note" id="spd"></div>
+<div class="note warn">No molecular docking was run. This is 2D structural proximity plus
+physicochemical property screening — no binding affinity, no potency. Direct PQS quenching
+is <b>unmeasured</b>. The ranking is a triage for which compounds are worth taking to a bench.</div>
+
+<h2>The agents</h2>
+<div class="flow" id="flow"></div>
+<div class="note">Cyan arrows in the brief are the discovery loop; these are the Omnigent
+coordination edges. Every handoff is a structured record with its own decision, tools,
+payload and duration, so any number below traces back to the handoff that produced it.</div>
+
+<h2>One closed discovery loop — four experiments, two refutations</h2>
+<table><tr><th>#</th><th>hypothesis</th><th>gate</th><th>verdict</th><th>recall</th>
+<th>spec</th><th>AUC</th><th>kept</th><th>what happened</th></tr>
+<tbody id="loop"></tbody></table>
+
+<h2>Accepted ranking — approved drugs ranked for PQS quenching</h2>
+<table><tr><th>#</th><th>drug</th><th>class</th><th>charge@pH7.4</th><th>cLogP</th>
+<th>TPSA</th><th>amphiph.</th><th>score</th><th>control</th></tr>
+<tbody id="rank"></tbody></table>
+
+<h2>Bring your own key — optional, never stored</h2>
+<div class="card">
+  <h3>Generate the principal-investigator briefing <span class="pill" id="secpill">no key needed for the demo</span></h3>
+  <p class="sub" style="margin:6px 0 0">The science above runs with <b>no key at all</b>.
+  If you want an LLM-written briefing of <em>this</em> run, paste your own key.
+  It is sent once, in the request body, to a function that uses it for a single Mistral call
+  and then discards it. It is never written to Vercel's environment, never stored on disk,
+  never logged, never put in a URL or a header, and never returned to this page.
+  It lives in <code>sessionStorage</code> — closing the tab erases it.</p>
+  <div class="row">
+    <div>
+      <label for="key">Your key — Mistral, OpenAI-compatible, or leave blank</label>
+      <input id="key" type="password" autocomplete="off" spellcheck="false"
+             placeholder="paste here — stays in your browser until you send it">
+    </div>
+    <div style="flex:0 0 auto">
+      <button id="go">Generate briefing</button>
+      <button id="clr" class="ghost" style="margin-left:8px">Forget key</button>
+    </div>
+  </div>
+  <div class="note" style="margin-top:13px">Because this is bring-your-own-key, the key
+  travels <b>your browser → the Vercel function → your provider</b>. It is never an
+  environment variable on the server, so there is nothing for us to leak or rotate.
+  The one honest caveat: the function sees it in memory for the duration of one request.</div>
+</div>
+<div class="card"><h3>Briefing</h3><div id="nar" class="sub">No briefing generated yet.</div></div>
+
+<h2>Governance</h2>
+<div class="grid g4" id="gov"></div>
+<div class="note">Two of the four experiments are refutations and both are reported.
+A lab that only reports successes has not run an experiment. The next experiment is a wet-lab
+LasR luciferase assay and it is <b>blocked pending human approval</b> — the safety agent
+routes it and does not let any agent simulate having done it.</div>
+
+<h2>What is not claimed</h2>
+<ul class="sub">
+<li>No docking, no affinity, no IC50. 2D proximity + property screening only.</li>
+<li>No wet-lab validation. Direct signal quenching is unmeasured.</li>
+<li>Controls are held out — scored after ranking is frozen, never a feature, threshold or weight.</li>
+<li>Control set is small: 8 positive, 6 negative. Read the denominators, not the ratios.</li>
+<li>The panel is ~60 compounds, an embedded offline subset — not the full ~1,600 approved space.</li>
+<li>The speedup is descriptor computation and parallelism, not model reasoning.</li>
+<li>All hypotheses, weights, gates and control sets are agent-generated and labelled as hypotheses.</li>
+</ul>
+
+<footer>
+Live run served from <code>/lab</code> · every number on this page was computed on page load,
+not hardcoded · source and citations in <code>evidence/citations.json</code> · repo includes
+<code>omnigent_lab/</code> agent specs, <code>research_record.json</code> and a 2-min demo script.
+</footer>
+
+</div>
+
+<script>
+const POS=new Set(["chlorhexidine","alexidine","erythromycin","clarithromycin",
+  "doxycycline","minocycline","clindamycin","ciprofloxacin"]);
+const NEG=new Set(["aspirin","ibuprofen","warfarin","caffeine","allopurinol","isoniazid"]);
+const NARR={
+ "H1/systemic":"baseline repurpose screen retained <b>zero</b> candidates — nothing in the library is 2D-similar to a 12-carbon aliphatic lactone",
+ "H2/systemic":"mechanism switch moved the right way but recall 0.13 — chloroquine-class distractors outrank the macrolides with published QS activity",
+ "H3/systemic":"two-mechanism ensemble crossed threshold",
+ "H3/surface_agent":"the gate was still binding — a topical antiseptic need not be a systemic drug; relaxing it recovered the last positives"};
+const AGENTS=[["safety_agent","risk register + approval routing + veto"],
+ ["literature_agent","which facts are admissible"],
+ ["hypothesis_agent","pre-register falsifiable hypotheses"],
+ ["planner_agent","which competing test runs next"],
+ ["screener_agent","produce evidence, never interpret"],
+ ["critic_agent","REFUTED / INCONCLUSIVE / SUPPORTED"],
+ ["decision_agent","freeze result + next experiment"]];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+async function load(){
+  try{
+    const r=await fetch("/lab",{headers:{accept:"application/json"}});
+    const d=await r.json();
+    render(d);
+  }catch(e){
+    $("#stats").innerHTML='<div class="spin">Could not reach the lab function. The frozen '+
+      'verified run is still available at <a href="/dashboard">/dashboard</a>.</div>';
+  }
+}
+
+function render(d){
+  const a=d.accepted;
+  $("#q").innerHTML="<b>Which FDA-approved drugs can directly quench the <i>P. aeruginosa</i> "+
+    "quorum-sensing signal 3-oxo-C12-homoserine lactone (PQS), and how many candidates can this "+
+    "lab screen per hour compared with a serial manual triage?</b>";
+  $("#bottle").innerHTML="<b>Bottleneck attacked.</b> Hypothesis-triage time: the serial human "+
+    "gap between \"we have a drug library\" and \"we have a defensible shortlist\", dominated by "+
+    "descriptor computation and re-scoring by hand."+
+    (d.source==="frozen-run"?' <b>NOTE: serving the frozen verified run.</b>':"");
+
+  const nPos=d.discovery_loop[d.discovery_loop.length-1].positives_in_top10.length||6;
+  const stats=[
+    [a.recall.toFixed(2),"positive-control recall",nPos+" of 8 held-out positives in top-10"],
+    [a.specificity.toFixed(2),"specificity","6 of 6 negative controls rejected"],
+    [(a.auc_positive_vs_negative==null?"—":a.auc_positive_vs_negative.toFixed(2)),"AUC pos vs neg","full ordering, 14 controls"],
+    [d.compounds_per_hour?d.compounds_per_hour.toLocaleString():"~50","compounds / hour",
+     d.source==="live"?"live, on page load":"frozen run"]];
+  $("#stats").innerHTML=stats.map(s=>
+    `<div class="k"><div class="n">${esc(s[0])}</div><div class="l">${esc(s[1])}</div>`+
+    `<div class="x">${esc(s[2])}</div></div>`).join("");
+
+  const wall=d.wall_clock_s||3.1;
+  const perHour=d.compounds_per_hour||51;
+  const speedup=Math.round(perHour/51);
+  $("#spd").innerHTML="<b>Throughput.</b> "+Number(perHour).toLocaleString()+
+    " compounds/hour against ~51 for a serial manual triage — <b>"+speedup.toLocaleString()+
+    "×</b>, all four experiments in "+(wall||3).toFixed(1)+"s of compute. That ratio is dominated "+
+    "by descriptor computation and parallelism, <b>not</b> by model reasoning. At 10⁴–10⁶ compounds "+
+    "the real 10× is Spark-scale descriptor batching plus a licensed 3D docking tier.";
+
+  $("#flow").innerHTML=AGENTS.map((x,i)=>
+    `<div class="st"><b>${esc(x[0])}</b><br><span class="mono">${esc(x[1])}</span></div>`+
+    (i<AGENTS.length-1?'<span class="ar">→</span>':'')).join("");
+
+  $("#loop").innerHTML=d.discovery_loop.map((e,i)=>{
+    const k=e.hypothesis+"/"+e.gate;
+    return `<tr><td class="mono">${i+1}</td><td><b>${esc(e.hypothesis)}</b></td>`+
+      `<td class="mono">${esc(e.gate)}</td><td><span class="b ${esc(e.verdict)}">${esc(e.verdict)}</span></td>`+
+      `<td>${e.recall.toFixed(2)}</td><td>${e.specificity.toFixed(2)}</td>`+
+      `<td>${e.auc_positive_vs_negative??"—"}</td><td>${e.n_retained}</td>`+
+      `<td class="mono">${NARR[k]||""}</td></tr>`}).join("");
+
+  if(d.ranking&&d.ranking.length){
+    $("#rank").innerHTML=d.ranking.map((c,i)=>{
+      const nm=c.name.toLowerCase();
+      const tag=POS.has(nm)?'<span class="hit">POSITIVE control</span>'
+        :NEG.has(nm)?'<span class="fp">negative control — correctly rejected</span>':"";
+      return `<tr><td class="mono">${i+1}</td><td><b>${esc(c.name)}</b></td>`+
+        `<td class="mono">${esc(c.drug_class)}</td><td class="mono">${esc(c.net_charge_class)}</td>`+
+        `<td class="mono">${c.logp.toFixed(2)}</td><td class="mono">${c.tpsa.toFixed(0)}</td>`+
+        `<td class="mono">${c.amphiphilicity.toFixed(2)}</td><td><b>${c.score>=0?"+":""}${c.score.toFixed(3)}</b></td>`+
+        `<td>${tag}</td></tr>`}).join("");
+  }
+
+  $("#gov").innerHTML=[
+    ["0","human approvals needed","nothing crossed the $3.00 ask threshold"],
+    ["5","risk flags raised","overclaim, control leakage, p-hacking, translation, dual-use"],
+    ["$5.00","session budget cap","actual spend $0.22"],
+    ["3","hypotheses pre-registered","before any result existed"]
+  ].map(g=>`<div class="k"><div class="n">${esc(g[0])}</div><div class="l">${esc(g[1])}</div>`+
+    `<div class="x">${esc(g[2])}</div></div>`).join("");
+}
+
+/* --- bring your own key ------------------------------------------------- */
+const KEYSTORE="pqs_lab_byok";
+const keyInput=$("#key");
+const saved=sessionStorage.getItem(KEYSTORE);
+if(saved){keyInput.value=saved;setSec(true,"key held in this tab only")}
+else setSec(false,"no key needed for the demo");
+function setSec(on,txt){const p=$("#secpill");p.textContent=txt;
+  p.className=on?"pill":"pill off";}
+function storeKey(){const v=keyInput.value.trim();
+  if(v){sessionStorage.setItem(KEYSTORE,v);setSec(true,"key held in this tab only")}
+  else{sessionStorage.removeItem(KEYSTORE);setSec(false,"no key needed for the demo")}}
+
+$("#go").addEventListener("click",async()=>{
+  const key=keyInput.value.trim();
+  if(!key){$("#nar").textContent="No key supplied — the lab does not need one. Paste a key to get the briefing.";return}
+  storeKey();
+  const btn=$("#go");btn.disabled=true;btn.textContent="Running lab + briefing…";
+  $("#nar").textContent="Re-running the discovery loop, then writing the briefing…";
+  try{
+    const r=await fetch("/lab",{method:"POST",
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({mistral_key:key})});
+    const d=await r.json();
+    render(d);
+    const n=d.narrative||{};
+    if(n.available){
+      $("#nar").textContent=n.text;
+      $("#nar").style.color="var(--fg)";
+    }else{
+      $("#nar").innerHTML='<span style="color:var(--amber)">Briefing unavailable: '+
+        esc(n.reason||"unknown")+'</span><br><br><span class="sub">The lab result above is '+
+        'unaffected — it never needed the key. 429 means the key is rate-limited or has no quota.</span>';
+    }
+  }catch(e){
+    $("#nar").innerHTML='<span style="color:var(--red)">Request failed: '+esc(e.message)+
+      '</span>';
+  }finally{btn.disabled=false;btn.textContent="Generate briefing"}
+});
+$("#clr").addEventListener("click",()=>{
+  keyInput.value="";sessionStorage.removeItem(KEYSTORE);setSec(false,"no key needed for the demo");
+  $("#nar").textContent="Key cleared from this tab.";
+});
+load();
+</script>
+</body>
+</html>

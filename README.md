@@ -147,6 +147,76 @@ an isogenic *lasI*⁻ mutant.
 Two of the four experiments are refutations and both are in the report. A lab that
 only reports successes has not run an experiment.
 
+## Deployment
+
+**Live:** https://hack-nation-3-10-2026.vercel.app
+
+Deployed on Vercel as a Python WSGI application (`index.py` → `lab/service.py`).
+
+### Bring your own key — there is no server-side secret
+
+The deployed service reads **no** environment variable for any model credential.
+There is no key in this repository and none in the Vercel project's environment.
+
+The science runs with **no key at all**. If a visitor wants an LLM-written
+principal-investigator briefing, they paste their own key. The credential then:
+
+- travels in the **POST body**, never a header, never a URL — Vercel's request
+  logs capture method/path/status, not bodies;
+- is used for exactly one upstream Mistral call and then discarded;
+- is never written to disk, never persisted, never returned to the client;
+- lives in `sessionStorage` in the browser, so closing the tab erases it.
+
+`lab/service.py` maintains a redaction list and scrubs anything key-shaped out of
+every response and error string, and the handler sets `credential_echoed` so the
+property is observable rather than asserted.
+
+### What Vercel changed, and what it did not
+
+| | |
+|---|---|
+| Deployment Protection | **off** — no login in front of the demo |
+| Security headers | CSP, `X-Frame-Options: DENY`, `nosniff`, `no-referrer`, HSTS, `Permissions-Policy` |
+| Path traversal | blocked (`..` rejected in the static handler) |
+| Function size | 124 KB |
+| **Science engine** | **RDKit removed from the deploy** |
+
+**RDKit cannot ship to Vercel.** It is 265 MB unpacked, over the 250 MB serverless
+function limit, and Vercel silently drops the whole function when a build exceeds
+it — the site still serves, but the backend is gone and you only find out at
+runtime. So `pyproject.toml` declares **zero runtime dependencies** and the
+deployed service answers from the committed, verified run in
+`evidence/results.json`: the same numbers `python -m lab.orchestrator` produces.
+The page labels the source as `frozen-run` rather than claiming a live
+recomputation.
+
+RDKit stays in the repo and runs locally, which is where the four experiments are
+actually executed. `lab/service_worker.py` still exists for that path: it runs the
+screens in a child process under a hard timeout, so if RDKit is ever installed
+server-side, a segfault becomes a clean fallback instead of a dead worker.
+
+Three platform details that cost real time and are worth knowing:
+
+1. A Python file inside `api/` makes the build ambiguous — Vercel switches to the
+   serverless-function builder and the WSGI app is never mounted. The entrypoint
+   must live at the repository root.
+2. `vercel.json` `rewrites` rewrite `PATH_INFO` before the app sees it, which
+   breaks any path the app handles itself. This project uses none.
+3. `ssoProtection` must be nulled via the API (`PATCH /v9/projects/{id}`); the
+   CLI has no flag for it, and leaving it on puts a Vercel login in front of the
+   submission.
+
+### Verify the deployment yourself
+
+```bash
+U=https://hack-nation-3-10-2026.vercel.app
+for p in "" dashboard lab citations results record demo/pqs-lab-demo.mp4; do
+  printf "%-24s -> " "/$p"; curl -s -o /dev/null -w "%{http_code}\n" "$U/$p"
+done
+curl -s "$U/lab" | python3 -m json.tool | head -20
+curl -sI "$U/" | grep -iE "content-security|x-frame"
+```
+
 ## Run it
 
 ```bash
