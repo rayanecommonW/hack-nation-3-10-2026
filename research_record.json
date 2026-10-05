@@ -1,6 +1,6 @@
 {
   "schema": "omnigent-scientific-record/1",
-  "created_utc": "2026-10-04T13:39:10Z",
+  "created_utc": "2026-10-05T15:31:27Z",
   "objective_set_by": "human principal investigator (frozen before run)",
   "brief": {
     "question": "Which FDA-approved drugs can directly quench the P. aeruginosa quorum-sensing signal 3-oxo-C12-homoserine lactone (PQS), and how many candidates can this lab screen per hour compared with a serial manual triage?",
@@ -150,8 +150,8 @@
       "payload": {
         "n_flags": 5
       },
-      "t_start": 347235.689078958,
-      "t_end": 347235.689083166,
+      "t_start": 368396.248425166,
+      "t_end": 368396.248429708,
       "notes": ""
     },
     {
@@ -167,8 +167,8 @@
       "payload": {
         "n_citations": 3
       },
-      "t_start": 347235.689106625,
-      "t_end": 347235.689201375,
+      "t_start": 368396.2484555,
+      "t_end": 368396.248734875,
       "notes": ""
     },
     {
@@ -186,8 +186,8 @@
           "H3  A two-mechanism ensemble (surface sequestration + sub-MIC transcriptional perturbation) predicts anti-QS activity better than either alone."
         ]
       },
-      "t_start": 347235.689214666,
-      "t_end": 347235.689215916,
+      "t_start": 368396.248751125,
+      "t_end": 368396.248752583,
       "notes": ""
     },
     {
@@ -205,8 +205,8 @@
           "H1/systemic": 18.0
         }
       },
-      "t_start": 347235.689225208,
-      "t_end": 347235.689230583,
+      "t_start": 368396.248762458,
+      "t_end": 368396.248767416,
       "notes": ""
     },
     {
@@ -222,8 +222,8 @@
         "gate": "systemic",
         "n_retained": 0
       },
-      "t_start": 347235.689239083,
-      "t_end": 347236.736271375,
+      "t_start": 368396.248776041,
+      "t_end": 368397.342549875,
       "notes": ""
     },
     {
@@ -242,8 +242,8 @@
         "specificity": 1.0,
         "auc": 0.771
       },
-      "t_start": 347236.736293208,
-      "t_end": 347236.736295958,
+      "t_start": 368397.342568541,
+      "t_end": 368397.342571,
       "notes": ""
     },
     {
@@ -264,8 +264,8 @@
           "H1/systemic": 2.0
         }
       },
-      "t_start": 347236.736307416,
-      "t_end": 347236.736315333,
+      "t_start": 368397.342581666,
+      "t_end": 368397.342589291,
       "notes": ""
     },
     {
@@ -281,8 +281,8 @@
         "gate": "systemic",
         "n_retained": 21
       },
-      "t_start": 347236.736325583,
-      "t_end": 347237.492667916,
+      "t_start": 368397.342599416,
+      "t_end": 368398.080888875,
       "notes": ""
     },
     {
@@ -301,8 +301,8 @@
         "specificity": 1.0,
         "auc": 0.708
       },
-      "t_start": 347237.49270075,
-      "t_end": 347237.492703166,
+      "t_start": 368398.080905791,
+      "t_end": 368398.080908083,
       "notes": ""
     },
     {
@@ -323,8 +323,8 @@
           "H2/surface_agent": 10.0
         }
       },
-      "t_start": 347237.492722,
-      "t_end": 347237.492730458,
+      "t_start": 368398.080919333,
+      "t_end": 368398.080925041,
       "notes": ""
     },
     {
@@ -340,8 +340,8 @@
         "gate": "systemic",
         "n_retained": 35
       },
-      "t_start": 347237.492740916,
-      "t_end": 347238.231298791,
+      "t_start": 368398.08093475,
+      "t_end": 368398.804176041,
       "notes": ""
     },
     {
@@ -360,8 +360,8 @@
         "specificity": 1.0,
         "auc": 1.0
       },
-      "t_start": 347238.231315333,
-      "t_end": 347238.231317458,
+      "t_start": 368398.80419075,
+      "t_end": 368398.804192625,
       "notes": ""
     },
     {
@@ -379,8 +379,8 @@
           "H3/surface_agent": 12.0
         }
       },
-      "t_start": 347238.231327458,
-      "t_end": 347238.231331916,
+      "t_start": 368398.804202541,
+      "t_end": 368398.804206958,
       "notes": ""
     },
     {
@@ -396,8 +396,8 @@
         "gate": "surface_agent",
         "n_retained": 41
       },
-      "t_start": 347238.231340291,
-      "t_end": 347238.968627166,
+      "t_start": 368398.804215625,
+      "t_end": 368399.523566875,
       "notes": ""
     },
     {
@@ -416,8 +416,8 @@
         "specificity": 1.0,
         "auc": 1.0
       },
-      "t_start": 347238.9686465,
-      "t_end": 347238.968648875,
+      "t_start": 368399.523581625,
+      "t_end": 368399.52358325,
       "notes": ""
     },
     {
@@ -433,8 +433,8 @@
         "sweep_points": 6,
         "ablation_terms": 5
       },
-      "t_start": 347238.96865975,
-      "t_end": 347238.968881,
+      "t_start": 368399.523592708,
+      "t_end": 368399.523811125,
       "notes": ""
     },
     {
@@ -448,8 +448,8 @@
       "payload": {
         "accepted": "H3"
       },
-      "t_start": 347238.968888375,
-      "t_end": 347238.968900458,
+      "t_start": 368399.523817791,
+      "t_end": 368399.523824583,
       "notes": ""
     }
   ],
@@ -8237,37 +8237,37 @@
       "evidence": "utility=18.0 cost=$0.05 under $5.0 budget"
     },
     {
-      "t": 1.05,
+      "t": 1.09,
       "belief": "H1 is REFUTED under the systemic gate.",
       "confidence": "REFUTED",
       "evidence": "held-out positive controls are not recovered by this ranking; gating eliminated every candidate -- the gate, not the ranking, is the bottleneck"
     },
     {
-      "t": 1.05,
+      "t": 1.09,
       "belief": "Run H2/systemic: H1 found zero usable proximity: switch to a mechanism-driven physicochemical hypothesis (cationic amphiphile)",
       "confidence": "chosen",
       "evidence": "utility=16.0 cost=$0.05 under $5.0 budget"
     },
     {
-      "t": 1.8,
+      "t": 1.83,
       "belief": "H2 is REFUTED under the systemic gate.",
       "confidence": "REFUTED",
       "evidence": "held-out positive controls are not recovered by this ranking"
     },
     {
-      "t": 1.8,
+      "t": 1.83,
       "belief": "Run H3/systemic: combine surface sequestration with the published sub-MIC transcriptional mechanism prior",
       "confidence": "chosen",
       "evidence": "utility=14.17 cost=$0.06 under $5.0 budget"
     },
     {
-      "t": 2.54,
+      "t": 2.56,
       "belief": "H3 is SUPPORTED under the systemic gate.",
       "confidence": "SUPPORTED",
       "evidence": "meets recall >= 0.6 and specificity >= 0.8"
     },
     {
-      "t": 2.54,
+      "t": 2.56,
       "belief": "Run H3/surface_agent: the systemic gate excluded the strongest documented anti-QS agent; a topical anti-virulence agent need not be a systemic drug",
       "confidence": "chosen",
       "evidence": "utility=12.0 cost=$0.05 under $5.0 budget"
@@ -8331,5 +8331,5 @@
     },
     "what_would_reach_10x": "Wall-clock here is dominated by descriptor computation, not by reasoning. At 10^4-10^6 compounds the bottleneck moves to (a) parallel descriptor batching on a Spark cluster and (b) replacing the 2D descriptors with a licensed 3D docking tier, at which point the agentic loop amortises over many more candidate hypotheses per human hour."
   },
-  "total_wall_clock_s": 3.28
+  "total_wall_clock_s": 3.275
 }

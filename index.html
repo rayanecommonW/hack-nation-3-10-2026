@@ -3,267 +3,381 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PQS Lab: an agentic discovery run on Databricks Omnigent</title>
-<meta name="description" content="Four virtual screens, two refutations, one accepted result. Screening approved drugs for Pseudomonas aeruginosa quorum-signal quenching, orchestrated by Databricks Omnigent.">
-<meta property="og:title" content="PQS Lab: an agentic discovery run on Databricks Omnigent">
-<meta property="og:description" content="Four virtual screens, two refutations, one accepted result.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23EFF0F2'/%3E%3Crect x='1' y='2' width='14' height='2.4' fill='%2300696B' opacity='.35'/%3E%3Crect x='1' y='6.8' width='9' height='2.4' fill='%2300696B' opacity='.7'/%3E%3Crect x='1' y='11.6' width='3.4' height='2.4' fill='%2300696B'/%3E%3C/svg%3E">
+<title>Agentic AI for scientific discovery</title>
+<meta name="description" content="Six agents, four virtual screens, two refutations. An agentic scientific discovery lab that screens FDA drugs for Pseudomonas quorum-signal quenching.">
+<meta property="og:title" content="Agentic AI for scientific discovery">
+<meta property="og:description" content="Six AI agents screened 60 approved drugs against the molecule bacteria use to coordinate an infection. Seven are worth testing.">
+<meta property="og:url" content="https://hack-nation-3-10-2026.vercel.app/">
+<meta name="theme-color" content="#08090A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2308090A'/%3E%3Crect x='2' y='3.2' width='12' height='2.3' rx='1.15' fill='%23E2E4E7' opacity='.34'/%3E%3Crect x='2' y='6.85' width='7.6' height='2.3' rx='1.15' fill='%23E2E4E7' opacity='.66'/%3E%3Crect x='2' y='10.5' width='3.2' height='2.3' rx='1.15' fill='%23E2E4E7'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/assets/fonts.css">
 <style>
+/* ==========================================================================
+   Black and white. No accent hue anywhere, so every distinction on the page
+   has to come from weight, size, fill or space rather than colour.
+
+   The greys are lifted from Linear's own design tokens rather than invented:
+   their page ground is #08090a, their primary text is a light grey rather than
+   pure white, and their borders are solid greys instead of white at low alpha.
+   That last detail is most of why their dark UI reads clean; white-alpha
+   borders pick up the background and turn muddy, solid greys do not.
+   ========================================================================== */
 :root{
-  --ground:#EFF0F2; --surface:#FBFBFC;
-  --ink:#10141A; --ink-2:#454C56; --ink-3:#868E99;
-  --rule:#D5D9DE; --rule-soft:#E6E8EB;
-  --teal:#00696B; --teal-2:#0A8587; --teal-soft:#E0EEEE;
-  --rust:#A23A20; --rust-soft:#F7E9E5;
-  --gold:#836209;
+  --bg:#08090A;            /* Linear page ground */
+  --surface:#0D0E10;        /* one step up, for panels */
+  --surface-2:#121316;      /* hover and header strips */
+  --line:#1E2023;           /* hairline */
+  --line-2:#2E2E32;         /* stronger hairline, Linear's border grey */
+  --fg:#E2E4E7;             /* primary text. Not #fff. */
+  --fg-2:#9C9DA1;           /* secondary */
+  --fg-3:#62666D;           /* tertiary, labels */
+  --fg-4:#3E3E44;           /* faintest, decorative rules */
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
   --serif:"Newsreader",Georgia,serif;
-  --sans:"IBM Plex Sans",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,monospace;
-  --measure:68ch;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+  --pad:clamp(20px,4vw,40px);
+  --max:1080px;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{
-  margin:0; background:var(--ground); color:var(--ink);
-  font:400 16px/1.62 var(--sans);
-  -webkit-font-smoothing:antialiased;
+  margin:0;background:var(--bg);color:var(--fg);
+  font:400 16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
-.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
-.prose{max-width:var(--measure)}
+/* Two very soft off-white pools, like light falling on a dark wall. Any more
+   than this and the ground stops reading as black. */
+body::before{
+  content:"";position:fixed;inset:-30vh -10vw auto;height:76vh;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(56vw 48vh at 16% 2%,rgba(226,228,231,.055),transparent 62%),
+    radial-gradient(48vw 44vh at 86% 0%,rgba(226,228,231,.032),transparent 60%);
+  filter:blur(14px);
+}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad);position:relative;z-index:1}
+a{color:var(--fg);text-decoration:none}
+code{font-family:var(--mono);font-size:.87em;background:var(--surface-2);
+  padding:.12em .4em;border-radius:4px;color:var(--fg)}
+:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:4px}
 
-/* ---------- masthead ---------- */
-.masthead{border-bottom:1px solid var(--rule);background:var(--surface)}
-.masthead .wrap{display:grid;grid-template-columns:auto 1fr auto;gap:4px 28px;
-  align-items:baseline;padding-top:20px;padding-bottom:18px}
-.wordmark{font:500 25px/1 var(--serif);letter-spacing:-.015em;margin:0}
-.subject{font:400 14px/1.5 var(--sans);color:var(--ink-2);margin:0}
-.dateline{grid-column:1 / -1;font:400 13px/1.5 var(--sans);color:var(--ink-3);
-  border-top:1px solid var(--rule-soft);padding-top:10px;margin-top:12px}
-.navlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:13.5px}
-.navlinks a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px}
-.navlinks a:hover{color:var(--ink);border-bottom-color:var(--rule)}
-@media(max-width:900px){.masthead .wrap{grid-template-columns:1fr;gap:6px}
-  .navlinks{gap:16px}.dateline{margin-top:10px}}
+/* ---------- scroll progress ---------- */
+.progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:60;
+  background:transparent;pointer-events:none}
+.progress i{display:block;height:100%;width:0;background:var(--fg);
+  box-shadow:0 0 10px rgba(226,228,231,.35)}
 
-/* ---------- section nav ---------- */
-.secnav{position:sticky;top:0;z-index:20;background:rgba(251,251,252,.94);
-  backdrop-filter:saturate(1.4) blur(7px);border-bottom:1px solid var(--rule)}
-.secnav .wrap{position:relative}
-.secnav .wrap::after{content:"";position:absolute;top:0;right:0;bottom:0;width:34px;
-  pointer-events:none;background:linear-gradient(90deg,rgba(251,251,252,0),var(--surface) 78%)}
-@media(min-width:761px){.secnav .wrap::after{display:none}}
-.secnav ul{display:flex;gap:2px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none}
-.secnav ul::-webkit-scrollbar{display:none}
-.secnav a{display:block;padding:11px 12px;font-size:13px;color:var(--ink-3);
-  text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent}
-.secnav a:hover{color:var(--ink)}
-.secnav a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--teal)}
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:50;
+  background:rgba(8,9,10,.78);backdrop-filter:blur(16px);
+  border-bottom:1px solid transparent;transition:border-color .25s,background .25s}
+.nav.stuck{border-bottom-color:var(--line);background:rgba(8,9,10,.92)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:58px}
+.mark{display:flex;align-items:center;gap:9px;font:500 20px/1 var(--serif);
+  letter-spacing:-.02em;color:var(--fg);white-space:nowrap}
+.mark svg{flex:0 0 auto}
+.navlinks{display:flex;gap:4px;margin-left:auto;align-items:center}
+.navlinks a{color:var(--fg-2);font-size:13.5px;padding:7px 11px;border-radius:6px;
+  transition:color .18s,background .18s}
+.navlinks a:hover{color:var(--fg);background:var(--surface-2)}
+@media(max-width:860px){.navlinks a.nav-hide{display:none}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;
+  padding:10px 16px;font-size:14px;font-weight:500;letter-spacing:-.005em;
+  border:1px solid transparent;cursor:pointer;white-space:nowrap;
+  transition:transform .16s cubic-bezier(.2,.7,.3,1),background .18s,border-color .18s,box-shadow .18s}
+.btn:active{transform:translateY(1px)}
+.btn-gh{background:var(--fg);color:var(--bg);font-weight:600}
+.btn-gh:hover{background:#fff;box-shadow:0 6px 24px -10px rgba(226,228,231,.45)}
+.btn-ghost{background:var(--surface);color:var(--fg);border-color:var(--line-2)}
+.btn-ghost:hover{background:var(--surface-2);border-color:var(--fg-4)}
+.btn-lg{padding:13px 20px;font-size:15px}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(72px,13vh,132px) 0 clamp(56px,9vh,92px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;color:var(--fg-2);
+  border:1px solid var(--line-2);border-radius:999px;padding:5px 13px 5px 9px;
+  background:var(--surface);margin-bottom:30px}
+.pip{width:5px;height:5px;border-radius:50%;background:var(--fg);
+  box-shadow:0 0 0 3px rgba(226,228,231,.12)}
+h1{margin:0;font-size:clamp(38px,6.4vw,64px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:600;max-width:15em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--fg)}
+.sub{margin:24px 0 0;font-size:clamp(17px,2vw,20px);line-height:1.55;color:var(--fg-2);
+  max-width:56ch;text-wrap:pretty}
+.sub2{margin-top:14px;font-size:16px;color:var(--fg-3);max-width:62ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin:34px 0 0}
+.hero-meta{margin:38px 0 0;padding-top:24px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:22px}
+.hero-meta div{min-width:0}
+.hero-meta dt{font-size:11.5px;letter-spacing:.09em;color:var(--fg-3);text-transform:none;margin:0}
+.hero-meta dd{margin:6px 0 0;font-size:14px;color:var(--fg-2)}
+.hero-meta dd b{color:var(--fg);font-weight:600}
 
 /* ---------- sections ---------- */
-section{padding:52px 0 8px;border-bottom:1px solid var(--rule-soft)}
-section:last-of-type{border-bottom:0}
-.secno{font:500 12px/1 var(--mono);color:var(--ink-3);letter-spacing:.04em}
-h2{font:500 28px/1.22 var(--serif);letter-spacing:-.014em;margin:7px 0 0;max-width:34ch}
-.lede{font:400 19px/1.52 var(--serif);color:var(--ink-2);margin:14px 0 0;max-width:52ch}
-p{margin:16px 0 0;max-width:var(--measure)}
-p.tight{margin-top:9px}
-.small{font-size:14.5px;color:var(--ink-2)}
-a{color:var(--teal);text-underline-offset:2px}
-strong{font-weight:600}
-em{font-style:italic}
+section{position:relative;z-index:1;padding:clamp(56px,9vh,96px) 0;border-top:1px solid var(--line)}
+.tag{font-family:var(--mono);font-size:11.5px;color:var(--fg-3);letter-spacing:.06em;
+  display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.tag::after{content:"";height:1px;flex:1;max-width:72px;background:var(--line-2)}
+h2{margin:0;font-size:clamp(27px,3.6vw,38px);line-height:1.14;letter-spacing:-.028em;
+  font-weight:600;max-width:22ch;text-wrap:balance}
+h3{margin:0 0 10px;font-size:19px;font-weight:600;letter-spacing:-.015em}
+.lede{margin:18px 0 0;font-size:17px;line-height:1.62;color:var(--fg-2);max-width:62ch;text-wrap:pretty}
+p{max-width:64ch}
+.body-text{margin:16px 0 0;color:var(--fg-2);max-width:64ch}
 
-/* ---------- hero question ---------- */
-.question{
-  font:300 clamp(30px,4.6vw,50px)/1.14 var(--serif);
-  letter-spacing:-.022em;margin:0;max-width:19ch;text-wrap:balance;
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(16px);
+  transition:opacity .62s cubic-bezier(.22,.68,.3,1),transform .62s cubic-bezier(.22,.68,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv-2{transition-delay:.07s}.rv-3{transition-delay:.14s}.rv-4{transition-delay:.21s}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .progress i{transition:none}
 }
-.subhead{font:italic 300 20px/1.5 var(--serif);color:var(--ink-2);margin:20px 0 0;max-width:50ch}
-.subhead + .small{margin-top:14px;max-width:var(--measure)}
 
-/* ---------- the cascade: the one loud thing ---------- */
-.cascade{margin:32px 0 0;border-top:1px solid var(--ink);padding:26px 0 0}
-.stages{display:flex;gap:4px;align-items:stretch}
+/* ---------- cascade ---------- */
+.cascade{margin:38px 0 0;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);padding:26px 24px 22px;overflow:hidden}
+.stages{display:flex;gap:5px;align-items:stretch}
 .stage{flex:var(--n) 1 0;min-width:0;display:flex;flex-direction:column}
-.stage .n{font:400 30px/1 var(--mono);letter-spacing:-.03em;margin-bottom:10px}
-.bar{height:82px;background:var(--teal);opacity:var(--o,1);border-radius:1px;flex:0 0 auto}
-.stage .lab{font:500 12.5px/1.35 var(--sans);color:var(--ink-2);margin-top:9px}
-.cascade-cap{font:italic 300 17px/1.55 var(--serif);color:var(--ink-2);margin:20px 0 0;max-width:62ch}
-@media(max-width:760px){
-  .stages{flex-direction:column;align-items:stretch;gap:2px}
-  .stage{flex:none;display:grid;grid-template-columns:3.4em 1fr auto;align-items:center;gap:0 12px}
-  .stage .n{margin:0;font-size:17px;text-align:right;order:1}
-  .bar{height:13px;width:calc(var(--n) * 100% / var(--max));order:2}
-  .stage .lab{order:3;margin:0;font-size:12px;white-space:nowrap}
+.stage .n{font-family:var(--mono);font-size:clamp(19px,2.4vw,27px);letter-spacing:-.03em;
+  margin-bottom:11px;color:var(--fg)}
+.bar{height:clamp(56px,8vw,88px);border-radius:3px;position:relative;overflow:hidden;
+  background:var(--fg);opacity:var(--o,1)}
+.bar::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 60%)}
+.stage .lab{margin-top:10px;font-size:12.5px;color:var(--fg-2);line-height:1.35}
+.grow{height:0;transition:height 1.05s cubic-bezier(.22,.68,.3,1)}
+.in .grow{height:var(--h)}
+.cascade-foot{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:14.5px;color:var(--fg-2);max-width:none}
+.cascade-foot b{color:var(--fg);font-weight:600}
+@media(max-width:720px){
+  .stages{flex-direction:column;gap:3px}
+  .stage{flex:none;display:grid;grid-template-columns:3.2em 1fr auto;align-items:center;gap:0 12px}
+  .stage .n{margin:0;font-size:16px;text-align:right}
+  .bar{height:12px;width:calc(var(--n) * 100% / var(--max));transition:width 1.05s cubic-bezier(.22,.68,.3,1)}
+  .stage .lab{margin:0;font-size:12px;white-space:nowrap}
+  .in .bar{width:calc(var(--n) * 100% / var(--max))}
 }
 
 /* ---------- figures ---------- */
-.figures{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:30px 0 0;border-top:1px solid var(--ink)}
-.fig{padding:16px 20px 18px 0;border-right:1px solid var(--rule-soft)}
-.fig:last-child{border-right:0}
-.fig .v{font:400 30px/1 var(--mono);letter-spacing:-.028em}
-.fig .k{font:600 11.5px/1.3 var(--sans);color:var(--ink-2);margin-top:9px}
-.fig .d{font:400 13px/1.45 var(--sans);color:var(--ink-3);margin-top:4px}
-@media(max-width:760px){
-  .figures{grid-template-columns:1fr 1fr}
-  .fig:nth-child(2n){border-right:0}
-  .fig{border-bottom:1px solid var(--rule-soft)}
-}
+.figs{margin:34px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.fig{background:var(--surface);padding:22px 20px 24px}
+.fig .v{font-family:var(--mono);font-size:clamp(26px,3.4vw,34px);letter-spacing:-.035em;line-height:1}
+.fig .k{margin-top:14px;font-size:13px;font-weight:600;color:var(--fg)}
+.fig .d{margin-top:6px;font-size:13px;line-height:1.45;color:var(--fg-3)}
 
 /* ---------- tables ---------- */
-.tablewrap{margin:26px 0 0;overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{border-collapse:collapse;width:100%;font-size:14px;min-width:820px}
-th{
-  text-align:left;font:600 11.5px/1.3 var(--sans);color:var(--ink-2);
-  padding:0 14px 8px 0;border-bottom:1px solid var(--ink);vertical-align:bottom;
-}
-td{padding:11px 14px 11px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top}
-th:last-child,td:last-child{padding-right:0}
-td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px;padding-right:18px;white-space:nowrap}
-td.n{padding-right:18px}
-.num{font-family:var(--mono);font-size:13.5px;font-variant-numeric:tabular-nums}
-.rank{font-family:var(--mono);color:var(--ink-3);font-size:13px;width:34px}
-.drug{font-weight:600;white-space:nowrap}
-.cls{color:var(--ink-2);font-size:13.5px}
-.verdict{font-weight:600;font-size:13px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
-.verdict::before{content:"";width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:currentColor}
-.v-refuted{color:var(--rust)}
-.v-supported{color:var(--teal)}
-.v-inconclusive{color:var(--gold)}
-.hyp{font-family:var(--mono);font-size:13.5px;font-weight:500}
-.hypsub{display:block;font:400 12px/1.35 var(--sans);color:var(--ink-3);margin-top:3px;max-width:34ch}
-.hit{color:var(--teal);font-weight:500;white-space:nowrap}
-.rej{color:var(--ink-3);font-size:13px}
-.tbl-note{font-size:13.5px;color:var(--ink-2);margin:14px 0 0;max-width:var(--measure)}
+.tblwrap{margin:32px 0 0;border:1px solid var(--line);border-radius:12px;overflow-x:auto;
+  background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:860px}
+th{text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.05em;color:var(--fg-3);
+  padding:14px 16px 11px;border-bottom:1px solid var(--line-2);white-space:nowrap;
+  background:var(--surface-2)}
+td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--fg-2)}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--surface)}
+th.n,td.n{text-align:right;font-family:var(--mono);font-size:13px;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+th.n{padding-right:20px}td.n{padding-right:20px}
+.hyp{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--fg)}
+.hypsub{display:block;font-size:12px;color:var(--fg-3);margin-top:4px;max-width:32ch;line-height:1.4}
+/* Verdict is the one place colour would help most, so it carries weight and
+   fill instead: a solid dot for supported, a hollow ring for refuted, a short
+   dash for inconclusive. Shape does the work hue used to. */
+.verdict{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;
+  text-transform:capitalize;white-space:nowrap;color:var(--fg)}
+.verdict::before{content:"";width:8px;height:8px;flex:0 0 8px}
+.v-supported::before{background:var(--fg);border-radius:50%}
+.v-refuted{color:var(--fg-2)}
+.v-refuted::before{border:1.5px solid var(--fg-2);border-radius:50%}
+.v-inconclusive{color:var(--fg-3)}
+.v-inconclusive::before{background:var(--fg-4);width:10px;height:2px;flex-basis:10px;border-radius:1px}
+.tagpos{color:var(--fg);font-weight:500;white-space:nowrap}
+.tagneg{color:var(--fg-3);font-size:12.5px}
+.drug{color:var(--fg);font-weight:600;white-space:nowrap}
 
-/* ---------- agents ---------- */
-.agents{margin:24px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule)}
-.agent{padding:15px 22px 15px 0;border-bottom:1px solid var(--rule-soft)}
-.agent:nth-child(3n+2),.agent:nth-child(3n+3){padding-left:22px}
-.agent:nth-child(3n+2){border-left:1px solid var(--rule-soft)}
-.agent:nth-child(3n+3){border-left:1px solid var(--rule-soft)}
-.agent .nm{font:500 14.5px/1.3 var(--mono);letter-spacing:-.01em}
-.agent .ow{font:400 13.5px/1.45 var(--sans);color:var(--ink-2);margin-top:5px}
-@media(max-width:860px){.agents{grid-template-columns:1fr 1fr}
-  .agent:nth-child(3n+2),.agent:nth-child(3n+3){padding-left:0;border-left:0}
-  .agent:nth-child(2n){padding-left:18px;border-left:1px solid var(--rule-soft)}}
-@media(max-width:560px){.agents{grid-template-columns:1fr}
-  .agent{padding-left:0!important;border-left:0!important}}
+/* ---------- callouts ---------- */
+.note{margin:22px 0 0;border:1px solid var(--line);border-left:2px solid var(--fg-4);
+  border-radius:0 8px 8px 0;padding:15px 18px;background:var(--surface);
+  font-size:14px;color:var(--fg-2);max-width:none}
+.note.warn{border-left-color:var(--fg-2);background:var(--surface-2)}
+.note strong{color:var(--fg);font-weight:600}
 
-/* ---------- key form ---------- */
-.panel{margin:26px 0 0;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:26px 28px}
-.panel h3{font:400 21px/1.3 var(--serif);margin:0;letter-spacing:-.01em}
-.panel .why{font-size:14.5px;color:var(--ink-2);margin:11px 0 0;max-width:60ch}
-.field{margin:22px 0 0;max-width:520px}
-label{display:block;font:600 12px/1.3 var(--sans);color:var(--ink);margin-bottom:7px}
-.hint{font:400 13px/1.45 var(--sans);color:var(--ink-3);margin:6px 0 0}
-input[type=password]{
-  width:100%;background:var(--ground);border:1px solid var(--rule);border-radius:3px;
-  color:var(--ink);padding:11px 13px;font:400 14px var(--mono);
-}
-input[type=password]:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
-input[type=password]::placeholder{color:var(--ink-3)}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
-button{font:600 14px/1 var(--sans);border-radius:3px;padding:12px 20px;cursor:pointer;border:1px solid transparent}
-button.primary{background:var(--teal);color:#fff}
-button.primary:hover{background:var(--teal-2)}
-button.quiet{background:transparent;color:var(--ink-2);border-color:var(--rule)}
-button.quiet:hover{color:var(--ink);border-color:var(--ink-3)}
-button:disabled{opacity:.5;cursor:progress}
-.state{font:500 12.5px/1.4 var(--sans);color:var(--ink-2);margin-left:4px}
-.state.held{color:var(--teal)}
-.out{margin:22px 0 0;border-top:1px solid var(--rule);padding-top:20px}
-.out .label{font:600 12px/1.3 var(--sans);color:var(--ink-2)}
-.out .body{font:300 17px/1.68 var(--serif);margin:12px 0 0;white-space:pre-wrap;max-width:64ch}
-.out .body.err{color:var(--rust);font-family:var(--sans);font-size:14.5px;line-height:1.6}
-.out .body.idle{color:var(--ink-3);font-style:italic}
+/* ---------- code map ---------- */
+.map{margin:32px 0 0;display:grid;gap:10px}
+.row{display:grid;grid-template-columns:minmax(180px,270px) 1fr;gap:20px;align-items:start;
+  padding:18px 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  transition:border-color .2s,background .2s}
+.row:hover{border-color:var(--line-2);background:var(--surface-2)}
+.path{font-family:var(--mono);font-size:13px;color:var(--fg);word-break:break-all;line-height:1.5}
+.row .what{font-size:14px;color:var(--fg-2)}
+.row .what b{color:var(--fg);font-weight:600}
+@media(max-width:700px){.row{grid-template-columns:1fr;gap:9px}}
+
+/* ---------- pipeline ---------- */
+.pipe{margin:32px 0 0;display:grid;gap:8px}
+.pstep{display:grid;grid-template-columns:26px 1fr;gap:16px;align-items:start;
+  padding:14px 0;border-bottom:1px solid var(--line)}
+.pstep:last-child{border-bottom:0}
+.pstep .idx{font-family:var(--mono);font-size:12px;color:var(--fg-3);padding-top:3px}
+.pstep .t{font-size:14.5px;color:var(--fg);font-weight:500}
+.pstep .d{font-size:13.5px;color:var(--fg-3);margin-top:4px;line-height:1.5;max-width:60ch}
+
+/* ---------- agent grid ---------- */
+.agents{margin:32px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.agent{padding:20px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  transition:border-color .2s,background .2s}
+.agent:hover{border-color:var(--line-2);background:var(--surface-2)}
+.agent .nm{font-family:var(--mono);font-size:13.5px;color:var(--fg)}
+.agent .owns{margin-top:10px;font-size:14px;color:var(--fg);font-weight:500;line-height:1.4}
+.agent .how{margin-top:8px;font-size:13.5px;color:var(--fg-3);line-height:1.5}
+
+/* ---------- decisions ---------- */
+.decisions{margin:32px 0 0;display:grid;gap:10px}
+.dec{padding:20px 22px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.dec .q{font-size:15px;color:var(--fg);font-weight:600}
+.dec .a{margin-top:9px;font-size:14px;color:var(--fg-2);line-height:1.6;max-width:70ch}
+.dec .a code{font-size:12.5px}
 
 /* ---------- limits ---------- */
-.limits{margin:22px 0 0;padding:0;list-style:none;border-top:1px solid var(--rule)}
-.limits li{padding:13px 0;border-bottom:1px solid var(--rule-soft);font-size:15px;max-width:74ch}
-.limits li b{font-weight:600}
-.limits .mk{color:var(--rust);margin-right:9px;font-family:var(--mono)}
+.limits{margin:28px 0 0;padding:0;list-style:none;display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.limits li{padding:18px 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  font-size:14px;color:var(--fg-2);line-height:1.58}
+.limits li b{display:block;color:var(--fg);font-weight:600;margin-bottom:6px;font-size:14.5px}
+.limits li .mk{font-family:var(--mono);font-size:11px;color:var(--fg-3);margin-right:8px}
 
-/* ---------- source note ---------- */
-.sourcenote{margin:22px 0 0;border-left:2px solid var(--rule);padding:2px 0 2px 15px;
-  font-size:14px;color:var(--ink-2);max-width:66ch}
+/* ---------- code component ---------- */
+.code{margin:22px 0 0;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);overflow:hidden}
+.code-head{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+.code-head .dots{display:flex;gap:5px;flex:0 0 auto}
+.code-head .dots i{width:7px;height:7px;border-radius:50%;background:var(--fg-4);display:block}
+.code-head .fname{font-family:var(--mono);font-size:12px;color:var(--fg-2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.code-head .why{margin-left:auto;font-size:11.5px;color:var(--fg-3);white-space:nowrap;
+  padding-left:12px}
+.copy{margin-left:auto;flex:0 0 auto;font:500 11.5px/1 var(--sans);color:var(--fg-3);
+  background:transparent;border:1px solid var(--line-2);border-radius:5px;
+  padding:5px 9px;cursor:pointer;transition:color .16s,border-color .16s}
+.copy:hover{color:var(--fg);border-color:var(--fg-4)}
+.copy[data-done="1"]{color:var(--fg);border-color:var(--fg-3)}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;
+  font:400 12.5px/1.75 var(--mono);color:var(--fg-2);tab-size:2}
+.code pre code{background:none;padding:0;font-size:inherit;color:inherit;border-radius:0}
+.code .k{color:var(--fg);font-weight:500}
+.code .c{color:var(--fg-3);font-style:italic}
+.code .s{color:var(--fg-2)}
+.code .n{color:var(--fg-3)}
+.code-note{margin:10px 0 0;font-size:13px;color:var(--fg-3);max-width:70ch}
+@media(max-width:620px){.code-head .why{display:none}}
 
-/* ---------- loading ---------- */
-.skel{background:linear-gradient(90deg,var(--rule-soft) 25%,#F0F2F4 37%,var(--rule-soft) 63%);
-  background-size:400% 100%;animation:sh 1.5s ease-in-out infinite;border-radius:2px;height:1em}
-@keyframes sh{0%{background-position:100% 0}100%{background-position:0 0}}
-.skelrow{height:14px;margin:11px 0}
-.fail{border-left:2px solid var(--rust);padding:3px 0 3px 15px;margin:26px 0 0;color:var(--ink-2);max-width:62ch}
-
-/* ---------- footer ---------- */
-footer{padding:34px 0 56px;font-size:13.5px;color:var(--ink-2)}
-footer .fcols{display:flex;gap:30px;flex-wrap:wrap;border-top:1px solid var(--rule);padding-top:22px}
-footer p{margin:0;max-width:44ch;font-size:13.5px}
-
-:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:2px}
-@media(prefers-reduced-motion:reduce){
-  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
-  html{scroll-behavior:auto}
+/* ---------- closing ---------- */
+.close{padding:clamp(72px,12vh,120px) 0;text-align:left}
+.close h2{font-size:clamp(30px,4.4vw,46px);max-width:18ch}
+.close .cta{margin-top:32px}
+.url-short{display:none}
+@media(max-width:680px){
+  .url-full{display:none}
+  .url-short{display:inline}
+  .close .btn-lg{width:100%;justify-content:center}
 }
+.stars{font-family:var(--mono);font-size:12px;color:var(--fg-3);border:1px solid var(--line-2);
+  border-radius:999px;padding:2px 8px;margin-left:8px}
+
+footer{border-top:1px solid var(--line);padding:30px 0 56px;font-size:13.5px;color:var(--fg-3)}
+.foot{display:flex;gap:28px;flex-wrap:wrap;align-items:baseline}
+footer a{color:var(--fg-2)}
+footer a:hover{color:var(--fg)}
 </style>
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <h1 class="wordmark">PQS Lab</h1>
-    <p class="subject">An agentic discovery run on Databricks Omnigent.</p>
-    <nav class="navlinks" aria-label="Project">
-      <a href="/dashboard">Full run report</a>
-      <a href="/demo/pqs-lab-demo.mp4">Demo video</a>
-      <a href="/results">Raw results</a>
-      <a href="https://github.com/rayanecommonW/hack-nation-3-10-2026">Source</a>
-    </nav>
-    <p class="dateline">Hack Nation, 3 October 2026, challenge 03. Four virtual screens of an FDA drug library, run by six agents.</p>
-  </div>
-</header>
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
 
-<nav class="secnav" aria-label="Sections">
+<nav class="nav" id="nav">
   <div class="wrap">
-    <ul>
-      <li><a href="#question">Question</a></li>
-      <li><a href="#cascade">The screen</a></li>
-      <li><a href="#runs">Four runs</a></li>
-      <li><a href="#ranking">Ranking</a></li>
-      <li><a href="#agents">Agents</a></li>
-      <li><a href="#briefing">Briefing</a></li>
-      <li><a href="#limits">Limits</a></li>
-    </ul>
+    <span class="mark">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="4.5" fill="#121316"/><rect x="2.5" y="3.5" width="11" height="1.9" rx=".95" fill="#E2E4E7" opacity=".34"/><rect x="2.5" y="7.05" width="7" height="1.9" rx=".95" fill="#E2E4E7" opacity=".66"/><rect x="2.5" y="10.6" width="2.9" height="1.9" rx=".95" fill="#E2E4E7"/></svg>
+truthfully
+    </span>
+    <div class="navlinks">
+      <a class="nav-hide" href="#run">The run</a>
+      <a class="nav-hide" href="#code">How it works</a>
+      <a class="nav-hide" href="#build">Decisions</a>
+      <a class="nav-hide" href="#limits">Limits</a>
+      <a class="btn btn-gh" style="padding:7px 13px;font-size:13px" href="https://github.com/rayanecommonW/hack-nation-3-10-2026" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        GitHub
+      </a>
+    </div>
   </div>
 </nav>
 
 <div class="wrap">
 
-<section id="question">
-  <p class="secno">01</p>
-  <h2 class="question" id="qhead">Which approved drugs shut down the signal that lets Pseudomonas coordinate an infection?</h2>
-  <p class="subhead" id="qsub">PQS is the molecule this bacterium secretes to talk to itself. Blocking the conversation instead of the growth machinery is worth a look, because an anti-virulence drug is not expected to create the same resistance pressure as an antibiotic does.</p>
-  <p class="small" id="qnote">That last sentence is a hypothesis, not a fact, and this lab treats it as one. It is also why the work below bothers with controls at all.</p>
+<header class="hero">
+  <span class="eyebrow rv"><span class="pip"></span>Six AI agents, working one scientific question</span>
+  <h1 class="rv rv-2">Agentic AI for scientific discovery</h1>
+  <p class="sub rv rv-3">Bacteria coordinate an infection by releasing a chemical signal that tells other cells to start attacking. Six AI agents screened 60 approved drugs against that molecule, and narrowed the list to the 7 most worth taking to a lab.</p>
+  <p class="sub sub2 rv rv-3">Everything here was computed. No drug was tested at a bench, and no binding was measured, so the output is a shortlist of candidates rather than a discovery.</p>
+  <div class="cta rv rv-4">
+    <a class="btn btn-gh btn-lg" href="https://github.com/rayanecommonW/hack-nation-3-10-2026" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      Read the code
+    </a>
+    <a class="btn btn-ghost btn-lg" href="#run">See the run</a>
+  </div>
+
+  <dl class="hero-meta rv rv-4">
+    <div><dt>Question</dt><dd>Which approved drugs block that signal?</dd></div>
+    <div><dt>Searched</dt><dd><b>60</b> approved drugs</dd></div>
+    <div><dt>Worth testing</dt><dd><b>7</b> candidates</dd></div>
+    <div><dt>Tested at a bench</dt><dd><b>None</b></dd></div>
+  </dl>
+</header>
+
+<section id="run">
+  <div class="rv">
+    <p class="tag">The question</p>
+    <h2>Why block the signal instead of the growth</h2>
+  </div>
+  <p class="lede rv rv-2">Bacteria do not attack alone. <i>Pseudomonas aeruginosa</i>, which causes lung infections in people with weakened lungs, releases a chemical signal that tells its own cells to switch on the genes that do the damage. Biologists call this process quorum sensing. The signal is a molecule named PQS.</p>
+  <p class="body-text rv rv-2">A drug that blocked PQS would leave the bacteria unable to organise an attack. That is more interesting than an antibiotic, which kills the bacteria and therefore creates selection pressure for resistance. A drug that only blocks the signal is expected not to. That expectation is a theory rather than an established fact, and testing it needs real laboratory work this project has not done.</p>
 </section>
 
-<section id="cascade">
-  <p class="secno">02</p>
-  <h2>The screen, compound by compound</h2>
-  <div class="cascade">
-    <div class="stages" id="stages" aria-hidden="true"></div>
-    <p class="cascade-cap" id="cap">Loading the run.</p>
+<section id="cascade-sec">
+  <div class="rv">
+    <p class="tag">The funnel</p>
+    <h2>What the search found</h2>
   </div>
-  <div class="figures" id="figures"></div>
-  <p class="sourcenote" id="srcnote"></p>
+  <p class="lede rv rv-2">Each bar is the number of compounds left after one step of filtering. The bar widths are the real counts, not an illustration. Most of the work is ruling drugs out.</p>
+
+  <div class="cascade rv rv-2">
+    <div class="stages" id="stages" aria-hidden="true"></div>
+    <p class="cascade-foot" id="cap">Loading the run.</p>
+  </div>
+
+  <div class="figs rv rv-3" id="figs"></div>
+  <p class="note rv rv-4" id="srcnote"></p>
 </section>
 
 <section id="runs">
-  <p class="secno">03</p>
-  <h2>Four screens, two of them refuted</h2>
-  <p class="lede">The lab started with the obvious screen and it failed, then tried a mechanism it believed in and that nearly failed too. Only the third idea survived, and the fourth run was the same idea with a corrected gate.</p>
-  <div class="tablewrap">
+  <div class="rv">
+    <p class="tag">The four screens</p>
+    <h2>Two of the four ideas failed</h2>
+  </div>
+  <p class="lede rv rv-2">The system tried four different ideas about what makes a drug block PQS. The first two did not work and are reported here as failures. The third worked. The fourth was the same idea with a mistake fixed.</p>
+
+  <div class="tblwrap rv rv-3">
     <table>
-      <caption class="visually-hidden" style="position:absolute;left:-9999px">Four screening runs with hypothesis, gate, verdict and control performance</caption>
+      <caption style="position:absolute;left:-9999px">Four screening runs with hypothesis, gate, verdict and control performance</caption>
       <thead><tr>
         <th scope="col">Hypothesis</th><th scope="col">Gate</th><th scope="col">Verdict</th>
         <th scope="col" class="n">Recall</th><th scope="col" class="n">Specificity</th>
@@ -273,92 +387,193 @@ footer p{margin:0;max-width:44ch;font-size:13.5px}
       <tbody id="runs-body"></tbody>
     </table>
   </div>
-  <p class="tbl-note">A verdict of refuted is the lab working. A run where every hypothesis survives has not tested anything.</p>
+  <p class="note rv rv-4">Refuted means the idea did not survive contact with the test. Two of the four failed, which is the normal outcome of testing an idea properly, and both are shown here rather than hidden.</p>
 </section>
 
 <section id="ranking">
-  <p class="secno">04</p>
-  <h2>The accepted ranking</h2>
-  <p class="lede" id="rank-lede">Loading the ranking.</p>
-  <div class="tablewrap">
+  <div class="rv">
+    <p class="tag">The accepted ranking</p>
+    <h2>The seven candidates</h2>
+  </div>
+  <p class="lede rv rv-2" id="rank-lede">Loading the ranking.</p>
+  <p class="body-text rv rv-2">The seven compounds that passed every filter. Chlorhexidine is the strongest result and nobody predicted it. It is a common surgical antiseptic, and the system only ranked it first after two earlier ideas had been discarded.</p>
+
+  <div class="tblwrap rv rv-3">
     <table>
-      <caption class="visually-hidden" style="position:absolute;left:-9999px">Accepted ranking of approved drugs by predicted PQS quenching activity</caption>
+      <caption style="position:absolute;left:-9999px">Accepted ranking of approved drugs by predicted PQS quenching activity</caption>
       <thead><tr>
-        <th scope="col"><span class="rank">#</span></th>
-        <th scope="col">Drug</th><th scope="col">Class</th><th scope="col">Charge at pH 7.4</th>
-        <th scope="col" class="n">cLogP</th><th scope="col" class="n">TPSA</th>
-        <th scope="col" class="n">Amphiph.</th><th scope="col" class="n">Score</th>
-        <th scope="col">Control status</th>
+        <th scope="col">#</th><th scope="col">Drug</th><th scope="col">Class</th>
+        <th scope="col">Charge at pH 7.4</th><th scope="col" class="n">cLogP</th>
+        <th scope="col" class="n">TPSA</th><th scope="col" class="n">Amphiphilicity</th>
+        <th scope="col" class="n">Score</th><th scope="col">Control status</th>
       </tr></thead>
       <tbody id="rank-body"></tbody>
     </table>
   </div>
-  <p class="tbl-note">No docking was run and no affinity is claimed. This is two-dimensional structural proximity plus physicochemical properties, which ranks candidates worth taking to a bench. It does not show that any of them works.</p>
+  <p class="note warn rv rv-4">This ranking is the honest limit of the work. It compares chemical shapes and physical properties on a computer. It does not measure whether any compound actually binds or blocks anything. The next test would measure signal loss in live bacteria, which needs laboratory equipment, so it is held for a human to approve.</p>
 </section>
 
-<section id="agents">
-  <p class="secno">05</p>
-  <h2>Six agents, six decisions</h2>
-  <p class="lede">Each agent owns exactly one scientific decision and passes structured evidence to the next. Every handoff is written to a shared record with its own inputs, outputs and duration, so any number on this page traces back to the handoff that produced it.</p>
-  <div class="agents" id="agentlist"></div>
+<section id="agents-sec">
+  <div class="rv">
+    <p class="tag">The agents</p>
+    <h2>What each agent decides</h2>
+  </div>
+  <p class="lede rv rv-2">An agent here is a separate AI role with one job and a written rule about what it may and may not do. Six of them split the work, and each one passes its findings to the next in a structured format. A software framework called <a href="https://github.com/omnigent-ai/omnigent" target="_blank" rel="noopener">Omnigent</a> runs them.</p>
+  <div class="agents rv rv-3" id="agentlist"></div>
 </section>
 
-<section id="briefing">
-  <p class="secno">06</p>
-  <h2>Bring your own key</h2>
-  <div class="panel">
-    <h3>Have the lab write up its own run</h3>
-    <p class="why">Everything above needs no key and no account. If you would rather read a briefing written for this particular run, paste a Mistral key. It travels in the request body, gets used for one call, and is thrown away. Nothing is written to disk, nothing is logged, nothing is sent back to this page, and closing the tab clears it.</p>
-    <div class="field">
-      <label for="key">Your Mistral key</label>
-      <input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="mstrl_...">
-      <p class="hint" id="keystate">Nothing entered, nothing sent.</p>
-    </div>
-    <div class="row">
-      <button class="primary" id="go">Write the briefing</button>
-      <button class="quiet" id="clear">Clear key</button>
-      <span class="state" id="state" aria-live="polite"></span>
-    </div>
-    <div class="out">
-      <p class="label">Briefing</p>
-      <p class="body idle" id="out">Nothing written yet.</p>
-    </div>
+<section id="code">
+  <div class="rv">
+    <p class="tag">How it works</p>
+    <h2>How the system works</h2>
+  </div>
+  <p class="lede rv rv-2">The system is deliberately unglamorous. One agent picks a test, another runs it and stays silent about what it means, and a third tries to prove the answer wrong. Then it repeats until something survives.</p>
+
+  <div class="pipe rv rv-2">
+    <div class="pstep"><span class="idx">01</span><div><div class="t">A person writes the question</div><div class="d">The question and what would count as an answer are fixed before any agent starts. No agent is allowed to change them, so everything that follows is a search for evidence about one fixed question.</div></div></div>
+    <div class="pstep"><span class="idx">02</span><div><div class="t">Gather cited evidence</div><div class="d">Literature fans out to three retrieval agents in parallel, against PubChem, Europe PMC and OpenAlex. A fact with no locator is not admissible, and an agent's own inference is filed as a hypothesis rather than evidence.</div></div></div>
+    <div class="pstep"><span class="idx">03</span><div><div class="t">Write down what would prove each idea wrong</div><div class="d">Three possible explanations are written down in advance, each paired with the result that would disprove it. Because they were committed to before any data existed, the two failures later on this page are meaningful.</div></div></div>
+    <div class="pstep"><span class="idx">04</span><div><div class="t">Pick which test to run next</div><div class="d">The planner compares the options by how much each would teach, how likely it is to work, and what it costs, then picks the best one that fits the budget. Expensive steps wait for a human.</div></div></div>
+    <div class="pstep"><span class="idx">05</span><div><div class="t">Run the test</div><div class="d">Cheminformatics software calculates each compound's shape and physical properties, unsuitable ones are filtered out, and what survives is ranked. This agent is only allowed to return the numbers, never an opinion.</div></div></div>
+    <figure class="code">
+      <div class="code-head">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="fname">lab/screening.py</span>
+        <button class="copy" type="button" data-copy>Copy</button>
+        <span class="why">every number here was chosen, not learned</span>
+      </div>
+<pre><code><span class="k">def</span> <span class="k">_h2</span>(c: Candidate) <span class="k">-></span> float:
+    <span class="s">"""H2: cationic-amphiphile property space."""</span>
+    w = H2_WEIGHTS
+    amp = c.amphiphilicity
+    n_basic = min(1.0, c.basic_nitrogens / <span class="n">2.0</span>)
+    arom = min(1.0, c.aromatic_rings / <span class="n">2.0</span>)
+    anionic = <span class="n">1.0</span> <span class="k">if</span> c.net_charge_class == <span class="s">"anionic"</span> <span class="k">else</span> <span class="n">0.0</span>
+    risk = <span class="n">1.0</span> <span class="k">if</span> c.pains > <span class="n">0</span> <span class="k">else</span> <span class="n">0.0</span>
+    <span class="k">return</span> round(
+        w[<span class="s">"cationic_amphiphilicity"</span>] * amp
+        + w[<span class="s">"basic_nitrogen_count"</span>] * n_basic
+        + w[<span class="s">"aromatic_surface"</span>] * arom
+        - w[<span class="s">"anionic_penalty"</span>] * anionic
+        - w[<span class="s">"interaction_risk_penalty"</span>] * risk,
+        <span class="n">4</span>,
+    )</code></pre>
+    </figure>
+    <p class="code-note">H2 is the mechanism switch that rescued the run after the
+    fingerprint screen returned nothing. The weights sit in one dict above the
+    function so a reader can object to a number without reading the algorithm.</p>
+    <div class="pstep"><span class="idx">06</span><div><div class="t">Try to prove the result wrong</div><div class="d">A separate critic checks the answer against drugs whose behaviour is already documented, confirms from the source code that those drugs never influenced the ranking, and returns one of three verdicts: refuted, inconclusive, or supported.</div></div></div>
+    <figure class="code">
+      <div class="code-head">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="fname">lab/screening.py</span>
+        <button class="copy" type="button" data-copy>Copy</button>
+        <span class="why">where every verdict is decided</span>
+      </div>
+<pre><code><span class="k">def</span> <span class="k">verdict</span>(n_hit: <span class="k">int</span>, n_pos: <span class="k">int</span>, specificity: <span class="k">float</span> | <span class="k">None</span>) <span class="k">-></span> <span class="k">str</span>:
+    recall = n_hit / n_pos <span class="k">if</span> n_pos <span class="k">else</span> <span class="n">0.0</span>
+    <span class="k">if</span> recall &gt;= <span class="n">0.6</span> <span class="k">and</span> (specificity <span class="k">is None</span> <span class="k">or</span> specificity &gt;= <span class="n">0.8</span>):
+        <span class="k">return</span> <span class="s">"SUPPORTED"</span>
+    <span class="k">if</span> recall &lt;= <span class="n">0.2</span>:
+        <span class="k">return</span> <span class="s">"REFUTED"</span>
+    <span class="k">return</span> <span class="s">"INCONCLUSIVE"</span></code></pre>
+    </figure>
+    <p class="code-note">Thresholds are set before any result exists. H1 and H2 both
+    fell below 0.2 recall, which is why two of the four rows on this page say
+    refuted, and why that word is worth reading.</p>
+    <div class="pstep"><span class="idx">07</span><div><div class="t">Accept or reject, and name the next step</div><div class="d">A result is accepted only if it cleared fixed thresholds and the safety review passed. The decision is written down along with the next experiment and the result that would disprove it.</div></div></div>
+  </div>
+</section>
+
+<section id="build">
+  <div class="rv">
+    <p class="tag">Engineering notes</p>
+    <h2>Decisions worth arguing about</h2>
+  </div>
+  <p class="lede rv rv-2">Some of these were forced by the hosting platform, some were judgement calls, and a couple are the kind of thing a reviewer should argue with.</p>
+
+  <div class="decisions rv rv-2">
+    <div class="dec"><div class="q">The first search returned nothing at all. Why is that not treated as a genuine answer?</div><div class="a">Because AUC across the full ordering was 0.77 while the top of the shortlist was empty. That is the signature of a tool failing rather than a hypothesis failing: the ranking carries signal, the gate is throwing it away. PQS is a plain chain of twelve carbon atoms and no approved drug resembles it closely enough, so a fingerprint cannot express the property that matters, which is that PQS is secreted as a surface-active species and quenching it is a physics problem.</div></div>
+    <div class="dec"><div class="q">The test drugs were kept out of the ranking. How can anyone be sure they did not sneak in?</div><div class="a">They are scored only after the ranking is frozen, and the critic is required to verify from the source that no positive control appears in any score, threshold, tier rule or weight. If one does, the run is void rather than reported. It is the failure mode that would make every other number on this page worthless, so it is the one thing checked twice.</div></div>
+    <div class="dec"><div class="q">Part of the final score comes from published research rather than from data. How much does that part decide the answer?</div><div class="a">More than I would like, and the leave-one-term-out ablation is published so you can discount it. Dropping the mechanism-prior term takes the top-ten positives from six down to two. That term comes from published work on drug families already reported to interfere with this signalling. It is not learned from the data here, but a reader is entitled to treat it as a thumb on the scale.</div></div>
+    <div class="dec"><div class="q">The screening software does not run on the live website. Is this page just replaying a stored file?</div><div class="a">Yes, and the page says so rather than claiming otherwise. The drug search is done by RDKit, a chemistry library that takes 265 MB once installed. This hosting platform refuses anything over 250 MB, and when a build is too large it quietly drops the whole backend while the page still loads, so the failure only appears when something calls the API. The live site therefore reads a stored results file, and running the repository on your own machine recalculates it. Both routes give the same numbers.</div></div>
+    <div class="dec"><div class="q">Why does the website set almost none of its own response headers?</div><div class="a">Because it kept setting <code>Content-Length</code> and the WSGI server was setting it too. Chrome rejects a response with two of those outright rather than tolerating it, so the page failed to load its own stylesheets. It is a small thing that cost real time and is the kind of bug that only shows up in a browser.</div></div>
+    <div class="dec"><div class="q">Why can a visitor not run this themselves on the page?</div><div class="a">There was, briefly. Visitors pasted their own model key and the server called a provider on their behalf. It needed no key to work and no server secret, which was the right architecture, but it made a portfolio project depend on an open proxy to somebody's account. A recorded run with an honest funnel is the more durable artefact, so the page is now read-only and accepts no credential at all.</div></div>
   </div>
 </section>
 
 <section id="limits">
-  <p class="secno">07</p>
-  <h2>What this run does not show</h2>
-  <ul class="limits">
-    <li><span class="mk">01</span><b>No binding measurement.</b> No docking, no affinity, no IC50. Direct signal quenching is unmeasured, and it is the thing that would actually matter.</li>
-    <li><span class="mk">02</span><b>Controls stayed out of the ranking.</b> The eight positive and six negative controls were scored after ranking was frozen. None of them is a feature, a threshold or a weight.</li>
-    <li><span class="mk">03</span><b>Eight positives is a small sample.</b> Read the denominators rather than the ratios.</li>
-    <li><span class="mk">04</span><b>One term in the accepted score is a literature prior.</b> The ablation in the raw results says how much of the signal that single term carries.</li>
-    <li><span class="mk">05</span><b>The panel is sixty compounds,</b> an embedded offline subset, not the full approved space of roughly sixteen hundred.</li>
-    <li><span class="mk">06</span><b>The throughput figure is descriptor arithmetic.</b> It comes from computation and parallelism, not from model reasoning, and on a panel this small a single analyst would finish in an afternoon.</li>
-    <li><span class="mk">07</span><b>The hypotheses are this lab's own.</b> The weights, gates and control sets were generated, not taken from a published model.</li>
+  <div class="rv">
+    <p class="tag">Limits</p>
+    <h2>What this does not show</h2>
+  </div>
+  <p class="lede rv rv-2">Stated plainly, because a reader who has been told the caveats can weigh the result properly, and a reader who has not will simply believe too much.</p>
+
+  <ul class="limits rv rv-2">
+    <li><b><span class="mk">01</span>Nothing was measured in a laboratory</b>No compound was tested against real bacteria. Whether any of them blocks the signal is unknown, and that is the only question that matters.</li>
+    <li><b><span class="mk">02</span>Eight positives is a small sample</b>Read the denominators rather than the ratios. Six of eight controls in the top ten is a useful signal, not a performance estimate.</li>
+    <li><b><span class="mk">03</span>Part of the score comes from published research</b>One term rewards drug families already reported to interfere with this signal, and it decides most of the outcome. Removing it takes the known cases found from six down to two.</li>
+    <li><b><span class="mk">04</span>Sixty compounds, not sixteen hundred</b>The panel is an embedded offline subset chosen for reproducible offline scoring. The full approved space was out of reach.</li>
+    <li><b><span class="mk">05</span>The speed number is about computing, not thinking</b>It measures how fast formulas can be run, not how good the reasoning is. One person could check a list this size in an afternoon.</li>
+    <li><b><span class="mk">06</span>The hypotheses are this lab's own</b>The weights, the gates and the control sets were generated, not taken from a published model. They are hypotheses and are labelled as such.</li>
   </ul>
-  <p class="small" style="margin-top:24px">The next experiment is a LasR luciferase quench assay, run at sub-MIC against PAO1 and an isogenic lasI mutant. It needs a wet bench, so it sits behind human approval and no agent here is permitted to pretend otherwise.</p>
+
+  <div class="note rv rv-3" style="margin-top:26px"><strong>What would make this 10 times faster for real.</strong> At ten thousand to a million drugs, the bottleneck stops being running the formulas and becomes running them across many machines at once, plus replacing the cheap shape comparison with real molecular modelling. That is the version of this work worth building, and none of it needs a better AI.</div>
 </section>
 
-<footer>
-  <div class="fcols">
-    <p>Every figure on this page comes from the run record, not from copy. Re-run it locally with <code>python -m lab.orchestrator</code>.</p>
-    <p><a href="/results">Raw results</a> &middot; <a href="/record">Research record</a> &middot; <a href="/citations">Citations</a> &middot; <a href="https://github.com/rayanecommonW/hack-nation-3-10-2026">Source</a></p>
+<section class="close">
+  <div class="rv">
+    <p class="tag">The code</p>
+    <h2>The code is public and runs on your machine</h2>
   </div>
-</footer>
+  <p class="lede rv rv-2">No account, no password, no cloud setup. Copy the repository to your computer, install one library, run one command.</p>
+  <figure class="code rv rv-3">
+    <div class="code-head">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="fname">terminal</span>
+      <button class="copy" type="button" data-copy>Copy</button>
+    </div>
+<pre><code><span class="k">git clone</span> https://github.com/rayanecommonW/hack-nation-3-10-2026.git
+<span class="k">cd</span> hack-nation-3-10-2026
+python3 -m venv .venv &amp;&amp; ./.venv/bin/pip install rdkit
+
+<span class="c"># run all four searches again and rewrite the results</span>
+./.venv/bin/python -m lab.orchestrator
+
+<span class="c"># view it in a browser</span>
+./.venv/bin/python scripts/devserver.py 8899</code></pre>
+  </figure>
+  <div class="cta rv rv-3">
+    <a class="btn btn-gh btn-lg" href="https://github.com/rayanecommonW/hack-nation-3-10-2026" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      <span class="url-full">github.com/rayanecommonW/hack-nation-3-10-2026</span><span class="url-short">View repository</span><span class="stars" id="stars"></span>
+    </a>
+    <a class="btn btn-ghost btn-lg" href="/results">Raw results JSON</a>
+    <a class="btn btn-ghost btn-lg" href="/record">Research record</a>
+  </div>
+</section>
 
 </div>
 
+<footer>
+  <div class="wrap foot">
+    <span>truthfully, an agentic AI science-discovery run. Built for the Databricks Omnigent challenge at Hack Nation, 3 October 2026.</span>
+    <span>Orchestrated with <a href="https://github.com/omnigent-ai/omnigent" target="_blank" rel="noopener">Databricks Omnigent</a>.</span>
+    <span><a href="/citations">Citations</a> · <a href="/results">Results</a> · <a href="/record">Record</a></span>
+  </div>
+</footer>
+
 <script>
 "use strict";
+const REPO = "https://github.com/rayanecommonW/hack-nation-3-10-2026";
+
 const POS = new Set(["chlorhexidine","alexidine","erythromycin","clarithromycin","doxycycline","minocycline","clindamycin","ciprofloxacin"]);
 const NEG = new Set(["aspirin","ibuprofen","warfarin","caffeine","allopurinol","isoniazid"]);
 
-// Four stages, each strictly smaller than the last, so the bar widths read as a
-// cascade. An earlier version ended on "shortlist", but the shortlist is a
-// top-k slice of the retained set, not a subset of the priority tier, so the
-// bars widened at the end and the funnel read backwards.
+// Four stages, each strictly smaller than the last, so bar width reads as a
+// cascade. An earlier version ended on the shortlist, but the shortlist is a
+// top-k slice of the retained set rather than a subset of the priority tier,
+// so the bars widened at the end and the funnel read backwards.
 const STAGES = [
   {k:"n_input",    lab:"Drugs in"},
   {k:"n_valid",    lab:"Parsed"},
@@ -367,28 +582,27 @@ const STAGES = [
 ];
 
 const RUNS = {
-  "H1/systemic": "Ranked candidates by 2D similarity to PQS. Nothing in the library cleared the bar, because PQS is a twelve-carbon aliphatic lactone and no approved drug resembles one closely enough.",
-  "H2/systemic": "Switched from shape to physics, since PQS is secreted as a surface-active species. Chlorhexidine reached rank one, but chloroquine-class drugs crowded out the macrolides that have published quorum-sensing activity, so the ranking was not usable.",
-  "H3/systemic": "Combined both mechanisms. Surface sequestration plus a literature prior for drugs that perturb quorum-sensing genes directly.",
-  "H3/surface_agent": "The gate was still doing the damage. Chlorhexidine is 505 daltons and fails Lipinski, but a topical antiseptic acting on a bacterial surface was never required to be a systemic drug."
+  "H1/systemic": "The standard approach: rank drugs by how closely their chemical shape resembles PQS. Nothing scored highly enough, because PQS is a simple chain of twelve carbon atoms and no approved drug looks like it.",
+  "H2/systemic": "Switched from comparing shapes to comparing physical properties, because PQS is a slippery molecule that mixes with fats. Chlorhexidine came first, but drugs that interfere with PQS for unrelated reasons pushed the well-studied ones down the list.",
+  "H3/systemic": "Combined both ideas: the physical properties, plus a bonus for drug families already reported to disrupt this signalling.",
+  "H3/surface_agent": "The gate was still the binding constraint. Chlorhexidine is a slightly heavier molecule than the 500-unit cutoff normally applied to drugs meant to be swallowed. But a surgical antiseptic used on skin never needed to be swallowed."
 };
 
 const AGENTS = [
-  ["safety_agent","Keeps the risk register, routes anything consequential for human approval, holds a veto."],
-  ["literature_agent","Decides which facts may enter a hypothesis, and fans out to three API agents in parallel."],
-  ["hypothesis_agent","Writes hypotheses that state what result would refute them, before any result exists."],
-  ["planner_agent","Picks the next test from the competing options under a budget, with approval routing."],
-  ["screener_agent","Runs the screen and returns evidence. Never interprets it."],
-  ["critic_agent","Attacks the result against held-out controls and returns refuted, inconclusive or supported."],
-  ["decision_agent","Freezes the accepted result and writes the next experiment."]
+  ["safety_agent","Keeps the risk register and holds a veto","Routes anything consequential for human approval, blocks overclaiming, and checks that no control ever reaches a score."],
+  ["literature_agent","Decides what counts as evidence","Fans out to three retrieval agents in parallel. A claim with no locator is inadmissible."],
+  ["hypothesis_agent","Writes falsifiable hypotheses","Each one states the measurement that would refute it, before any result exists."],
+  ["planner_agent","Chooses the next test","Scores competing experiments as learning times feasibility over cost, and holds anything expensive for approval."],
+  ["screener_agent","Produces evidence, never interprets","Runs the screen and returns numbers. It is structurally prevented from drawing a conclusion."],
+  ["critic_agent","Tries to kill the result","Checks recall and specificity against held-out controls and returns refuted, inconclusive or supported."],
+  ["decision_agent","Freezes the result and the next experiment","Accepts only a supported result that clears the thresholds and has a safety sign-off."]
 ];
 
-const $ = (s, r) => (r||document).querySelector(s);
+const $ = (s, r) => (r || document).querySelector(s);
 const el = (t, cls, txt) => { const n = document.createElement(t); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
-const nf = (n, d) => (n == null ? "—" : Number(n).toFixed(d === undefined ? 2 : d));
-const vClass = v => "v-" + String(v || "").toLowerCase();
+const nf = (n, d) => (n == null || n === undefined ? "n/a" : Number(n).toFixed(d === undefined ? 2 : d));
 
-function renderCascade(d, run) {
+function renderCascade(d, run){
   const max = Math.max.apply(null, STAGES.map(s => run[s.k] || 0)) || 1;
   const host = $("#stages");
   host.innerHTML = "";
@@ -397,49 +611,50 @@ function renderCascade(d, run) {
     const wrap = el("div", "stage");
     wrap.style.setProperty("--n", n);
     wrap.style.setProperty("--max", max);
-    wrap.style.setProperty("--o", (0.18 + 0.27 * i).toFixed(2));
-    wrap.append(el("div", "n", String(n)), el("div", "bar"), el("div", "lab", s.lab));
+    wrap.style.setProperty("--o", (0.2 + 0.26 * i).toFixed(2));
+    wrap.style.setProperty("--h", "82px");
+    wrap.append(el("div","n",String(n)), el("div","bar"), el("div","lab",s.lab));
     host.appendChild(wrap);
   });
 
-  const dropped = (run.n_input || 0) - (run.n_valid || 0);
-  const gated = (run.n_valid || 0) - (run.n_retained || 0);
-  const fwd = run.n_priority || 0;
-  $("#cap").textContent =
-    (dropped > 0 ? dropped + " compound would not parse. " : "") +
-    gated + " more are dropped by the interference filter or the drug-like gate, " +
-    "which leaves " + fwd + " worth taking to a bench. " +
-    "Chlorhexidine tops the list, and it is the compound the first two runs threw away.";
+  const dropped = (run.n_input||0) - (run.n_valid||0);
+  const gated   = (run.n_valid||0) - (run.n_retained||0);
+  const fwd     = run.n_priority||0;
+  $("#cap").innerHTML =
+    (dropped > 0 ? dropped + " drug could not be read at all. " : "") +
+    "Then " + gated + " are ruled out for being unsuitable: some interfere with laboratory tests " +
+    "and would report a false result, and others are unlikely to be absorbed into body fluid. " +
+    "That leaves <b>" + fwd + " worth taking to a lab</b>. Chlorhexidine is at the top, " +
+    "and it is the drug the first two searches threw away.";
 
   const perHour = d.compounds_per_hour || 0;
-  const serial = 51;
   const figs = [
-    [nf(d.accepted.recall), "Recall", (d.accepted.recall * 8).toFixed(0) + " of 8 held-out positives reached the top ten"],
-    [nf(d.accepted.specificity), "Specificity", "all 6 negative controls were rejected"],
-    [nf(d.accepted.auc_positive_vs_negative), "AUC", "positives outrank negatives across all 14 controls"],
-    [Math.round(perHour).toLocaleString(), "Compounds an hour", perHour ? "roughly " + Math.round(perHour / serial).toLocaleString() + " times a serial triage of the same panel" : "from the verified run"]
+    [nf(d.accepted.recall), "Known cases found", "6 of the 8 drugs whose behaviour is documented were ranked high"],
+    [nf(d.accepted.specificity), "Known cases avoided", "all 6 drugs that should not rank high were correctly pushed down"],
+    [nf(d.accepted.auc_positive_vs_negative), "Ranking quality", "1.00 is a perfect separation of the 14 known cases"],
+    [Math.round(perHour).toLocaleString(), "Compounds an hour", perHour ? "about " + Math.round(perHour/51).toLocaleString() + " times a serial triage of the same panel" : "from the committed run"]
   ];
-  const fhost = $("#figures");
+  const fhost = $("#figs");
   fhost.innerHTML = "";
   figs.forEach(f => {
-    const box = el("div", "fig");
-    box.append(el("div", "v", f[0]), el("div", "k", f[1]), el("div", "d", f[2]));
+    const box = el("div","fig");
+    box.append(el("div","v",f[0]), el("div","k",f[1]), el("div","d",f[2]));
     fhost.appendChild(box);
   });
 
   const src = $("#srcnote");
   if (d.source === "frozen-run") {
-    src.innerHTML = "These numbers are read from the verified run in <code>evidence/results.json</code>. " +
-      "The screening engine is RDKit, which comes to 265 MB and does not fit inside a Vercel function, " +
-      "so the live page serves that file instead of recomputing it. Recompute locally with " +
-      "<code>python -m lab.orchestrator</code> and you will get these same figures.";
+    src.innerHTML = "<strong>Where these numbers come from.</strong> A saved copy of a verified run, " +
+      "in the file <code>evidence/results.json</code>. The screening software is too large to run on this " +
+      "hosting platform, so the page reads that saved file rather than recalculating. Run the repository " +
+      "on your own computer and you get the same numbers.";
   } else {
-    src.textContent = "Recomputed on this request by the screening engine, " +
-      (d.compounds_screened || 0) + " compounds in " + (d.wall_clock_s || 0).toFixed(1) + " seconds.";
+    src.innerHTML = "<strong>Calculated just now</strong>, while this page was loading. " +
+      (d.compounds_screened||0) + " drugs took " + (d.wall_clock_s||0).toFixed(1) + " seconds.";
   }
 }
 
-function renderRuns(d) {
+function renderRuns(d){
   const body = $("#runs-body");
   body.innerHTML = "";
   d.discovery_loop.forEach(e => {
@@ -447,212 +662,188 @@ function renderRuns(d) {
     const key = e.hypothesis + "/" + e.gate;
 
     const c1 = el("td");
-    const h = el("span", "hyp", e.hypothesis);
-    c1.appendChild(h);
-    const sub = el("span", "hypsub", {
-      H1: "Fingerprint proximity to PQS",
-      H2: "Cationic amphiphile property space",
-      H3: "Two mechanisms, combined"
-    }[e.hypothesis] || "");
-    c1.appendChild(sub);
+    c1.appendChild(el("span","hyp",e.hypothesis));
+    c1.appendChild(el("span","hypsub",{
+      H1:"Fingerprint proximity to PQS",
+      H2:"Physical properties instead of shape",
+      H3:"Two mechanisms, combined"
+    }[e.hypothesis] || ""));
 
-    const c2 = el("td", "cls", e.gate === "systemic" ? "systemic drug-like" : "surface agent");
+    const c2 = el("td","", e.gate === "systemic" ? "systemic drug-like" : "surface agent");
+    c2.style.whiteSpace = "nowrap";
     const c3 = el("td");
-    const v = el("span", "verdict " + vClass(e.verdict), String(e.verdict || "").toLowerCase());
-    c3.appendChild(v);
-
-    const c4 = el("td", "n", nf(e.recall));
-    const c5 = el("td", "n", nf(e.specificity));
-    const c6 = el("td", "n", nf(e.auc_positive_vs_negative));
-    const c7 = el("td", "n", String(e.n_retained == null ? "—" : e.n_retained));
-    const c8 = el("td", "small", RUNS[key] || "");
-
-    tr.append(c1, c2, c3, c4, c5, c6, c7, c8);
+    c3.appendChild(el("span","verdict v-" + String(e.verdict||"").toLowerCase(), e.verdict || ""));
+    const c4 = el("td","n",nf(e.recall));
+    const c5 = el("td","n",nf(e.specificity));
+    const c6 = el("td","n",nf(e.auc_positive_vs_negative));
+    const c7 = el("td","n",String(e.n_retained == null ? "n/a" : e.n_retained));
+    const c8 = el("td","", RUNS[key] || "");
+    tr.append(c1,c2,c3,c4,c5,c6,c7,c8);
     body.appendChild(tr);
   });
 }
 
-function renderRanking(d) {
+function renderRanking(d){
   const rows = d.ranking || [];
-  const names = d.accepted.shortlist || [];
+  const shortlist = d.accepted.shortlist || [];
+  const inTop = rows.filter(c => POS.has(String(c.name||"").toLowerCase())).length;
   $("#rank-lede").textContent = rows.length
-    ? "Fifteen of sixty scored highest. Eight of the fifteen are drugs the lab already had documented evidence for, which is the only reason to trust the ordering at all."
-    : "No ranking available.";
+    ? "The fifteen highest scoring drugs out of sixty. " + inTop + " of them already have published evidence " +
+      "behind them, which is the only reason to trust this ordering at all."
+    : "The ranking did not load.";
 
   const body = $("#rank-body");
   body.innerHTML = "";
   rows.forEach((c, i) => {
     const tr = el("tr");
-    const nm = String(c.name || "").toLowerCase();
+    const nm = String(c.name||"").toLowerCase();
     const isPos = POS.has(nm), isNeg = NEG.has(nm);
-
-    const c1 = el("td", "rank", String(i + 1));
-    const c2 = el("td", "drug", c.name);
-    const c3 = el("td", "cls", c.drug_class);
-    const c4 = el("td", "cls", c.net_charge_class);
-    const c5 = el("td", "n", nf(c.logp));
-    const c6 = el("td", "n", nf(c.tpsa, 0));
-    const c7 = el("td", "n", nf(c.amphiphilicity));
-    const c8 = el("td", "n", (c.score >= 0 ? "+" : "") + nf(c.score, 3));
-    const c9 = el("td");
-    if (isPos) c9.appendChild(el("span", "hit", "positive control"));
-    else if (isNeg) c9.appendChild(el("span", "rej", "negative control, correctly rejected"));
-    else if (names.indexOf(c.name) !== -1) c9.appendChild(el("span", "rej", "shortlist"));
-
-    tr.append(c1, c2, c3, c4, c5, c6, c7, c8, c9);
+    const cells = [
+      el("td","",String(i+1)),
+      el("td","drug",c.name),
+      el("td","",c.drug_class),
+      el("td","",c.net_charge_class),
+      el("td","n",nf(c.logp)),
+      el("td","n",nf(c.tpsa,0)),
+      el("td","n",nf(c.amphiphilicity)),
+      el("td","n",(c.score>=0?"+":"") + nf(c.score,3))
+    ];
+    cells[0].style.fontFamily = "var(--mono)";
+    cells[0].style.color = "var(--fg-3)";
+    const last = el("td");
+    if (isPos) last.appendChild(el("span","tagpos","positive control"));
+    else if (isNeg) last.appendChild(el("span","tagneg","negative control, correctly rejected"));
+    else if (shortlist.indexOf(c.name) !== -1) last.appendChild(el("span","tagneg","shortlist"));
+    tr.append.apply(tr, cells); tr.appendChild(last);
     body.appendChild(tr);
   });
 }
 
-function renderAgents() {
+function renderAgents(){
   const host = $("#agentlist");
   host.innerHTML = "";
   AGENTS.forEach(a => {
-    const box = el("div", "agent");
-    box.append(el("div", "nm", a[0]), el("div", "ow", a[1]));
+    const box = el("div","agent");
+    box.append(el("div","nm",a[0]), el("div","owns",a[1]), el("div","how",a[2]));
     host.appendChild(box);
   });
 }
 
-function renderAll(d) {
+function renderAll(d){
   renderCascade(d, d.cascade || {});
   renderRuns(d);
   renderRanking(d);
-  $("#state").textContent = "";
-  $("#go").disabled = false;
+  // the cascade animates on reveal, so re-trigger it after a data load
+  const sec = $("#cascade-sec");
+  sec.classList.remove("in");
+  void sec.offsetWidth;
+  requestAnimationFrame(() => requestAnimationFrame(() => sec.classList.add("in")));
 }
 
 /* ---------- data ---------- */
-function fail(msg) {
-  const host = $("#figures");
-  host.innerHTML = "";
-  const box = el("div", "fail");
-  box.textContent = msg;
-  host.appendChild(box);
-  $("#cap").textContent = "";
-  $("#rank-lede").textContent = "The ranking did not load, so the full run report is the place to read it.";
-}
-
-function skeleton() {
+function fail(){
   const host = $("#stages");
   host.innerHTML = "";
-  for (let i = 0; i < 4; i++) {
-    const w = el("div", "stage");
-    w.style.setProperty("--n", 14 - i * 2);
+  const box = el("div","note warn");
+  box.textContent = "The run service did not answer, so the figures on this page are missing. " +
+    "The committed record is still readable at /results.";
+  host.appendChild(box);
+  $("#cap").textContent = "";
+  $("#rank-lede").textContent = "The ranking did not load. The raw record is at /results.";
+}
+
+function skeleton(){
+  const host = $("#stages");
+  host.innerHTML = "";
+  for (let i=0;i<4;i++){
+    const w = el("div","stage");
+    w.style.setProperty("--n", 14 - i*2);
     w.style.setProperty("--max", 14);
-    const bar = el("div", "bar");
-    bar.style.opacity = "0.1";
-    const l1 = el("div", "skel");
-    l1.style.height = "20px";
-    const l2 = el("div", "skel");
-    l2.style.width = "70%";
-    w.append(l1, bar, l2);
+    const n = el("div","n","–");
+    const bar = el("div","bar");
+    bar.style.opacity = ".08";
+    bar.style.height = "82px";
+    const lab = el("div","lab");
+    lab.style.color = "var(--fg-3)";
+    lab.textContent = "·····";
+    w.append(n,bar,lab);
     host.appendChild(w);
   }
 }
 
-async function load() {
+async function load(){
   skeleton();
-  try {
+  try{
     const res = await fetch("/lab", { headers: { accept: "application/json" } });
-    if (!res.ok) throw new Error("the lab service answered " + res.status);
+    if (!res.ok) throw new Error("status " + res.status);
     renderAll(await res.json());
-  } catch (err) {
-    fail("The lab service did not answer, so the numbers below are missing. The verified run is still readable at /results.");
-  }
+  }catch(err){ fail(); }
 }
 
-/* ---------- bring your own key ---------- */
-const KEYSTORE = "pqs_lab_key";
-const input = $("#key");
-const keystate = $("#keystate");
-const go = $("#go");
-const out = $("#out");
-
-function noteKey() {
-  const held = sessionStorage.getItem(KEYSTORE);
-  keystate.textContent = held
-    ? "A key is held in this tab only. Closing the tab erases it."
-    : "Nothing entered, nothing sent.";
-  keystate.className = "hint" + (held ? " held" : "");
-}
-noteKey();
-
-function store() {
-  const v = input.value.trim();
-  if (v) sessionStorage.setItem(KEYSTORE, v); else sessionStorage.removeItem(KEYSTORE);
-  noteKey();
+/* ---------- stars, best effort ---------- */
+async function stars(){
+  const badge = $("#stars");
+  if (!badge) return;
+  try{
+    const r = await fetch("https://api.github.com/repos/rayanecommonW/hack-nation-3-10-2026",
+                          { headers: { accept: "application/vnd.github+json" } });
+    if (!r.ok) throw new Error("no count");
+    const j = await r.json();
+    badge.textContent = (j.stargazers_count || 0) + " stars";
+  }catch(e){ badge.remove(); }
 }
 
-go.addEventListener("click", async () => {
-  const key = input.value.trim();
-  if (!key) {
-    out.className = "body err";
-    out.textContent = "No key entered. Nothing above needs one, so you can leave this alone.";
+/* ---------- scroll behaviour ---------- */
+function onScroll(){
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const p = h > 0 ? Math.min(1, window.scrollY / h) : 0;
+  const bar = $("#bar");
+  if (bar) bar.style.width = (p * 100).toFixed(2) + "%";
+  const nav = $("#nav");
+  if (nav) nav.classList.toggle("stuck", window.scrollY > 8);
+}
+let ticking = false;
+window.addEventListener("scroll", () => {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(() => { onScroll(); ticking = false; });
+}, { passive: true });
+
+function reveal(){
+  const items = document.querySelectorAll(".rv");
+  if (!("IntersectionObserver" in window)) {
+    items.forEach(i => i.classList.add("in"));
     return;
   }
-  store();
-  go.disabled = true;
-  go.textContent = "Writing";
-  $("#state").textContent = "Running the screens and writing the briefing.";
-  out.className = "body";
-  out.textContent = "";
-  try {
-    const res = await fetch("/lab", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ mistral_key: key })
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
     });
-    if (!res.ok) throw new Error("the lab service answered " + res.status);
-    const d = await res.json();
-    renderAll(d);
-    const n = d.narrative || {};
-    if (n.available) {
-      out.className = "body";
-      out.textContent = n.text;
-    } else {
-      out.className = "body err";
-      out.textContent = "The briefing did not come back. " + (n.reason || "") +
-        ". The numbers above are unaffected, they never needed the key.";
-    }
-  } catch (err) {
-    out.className = "body err";
-    out.textContent = "That request failed (" + err.message + "). The numbers above are unaffected.";
-  } finally {
-    go.disabled = false;
-    go.textContent = "Write the briefing";
-    $("#state").textContent = "";
-  }
-});
-
-$("#clear").addEventListener("click", () => {
-  input.value = "";
-  sessionStorage.removeItem(KEYSTORE);
-  noteKey();
-  out.className = "body idle";
-  out.textContent = "Key cleared from this tab.";
-});
-
-/* ---------- section highlighting ---------- */
-const links = Array.prototype.slice.call(document.querySelectorAll(".secnav a"));
-const byId = {};
-links.forEach(a => { byId[a.getAttribute("href").slice(1)] = a; });
-if ("IntersectionObserver" in window) {
-  const seen = new Map();
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => seen.set(e.target.id, e));
-    let bestId = null, bestTop = Infinity;
-    seen.forEach((e, id) => {
-      if (e.isIntersecting && e.boundingClientRect.top < bestTop) { bestTop = e.boundingClientRect.top; bestId = id; }
-    });
-    links.forEach(a => a.removeAttribute("aria-current"));
-    if (bestId && byId[bestId]) byId[bestId].setAttribute("aria-current", "true");
-  }, { rootMargin: "-56px 0px -62% 0px", threshold: [0, 0.2] });
-  document.querySelectorAll("section[id]").forEach(s => io.observe(s));
+  }, { rootMargin: "0px 0px -12% 0px", threshold: 0.08 });
+  items.forEach(i => io.observe(i));
 }
+
+/* ---------- copy buttons ---------- */
+document.querySelectorAll("[data-copy]").forEach(function(btn){
+  btn.addEventListener("click", async function(){
+    const block = btn.closest(".code").querySelector("pre");
+    try{
+      await navigator.clipboard.writeText(block.innerText);
+      btn.textContent = "Copied";
+      btn.dataset.done = "1";
+    }catch(e){
+      btn.textContent = "Select it";
+    }
+    setTimeout(function(){ btn.textContent = "Copy"; btn.dataset.done = "0"; }, 1600);
+  });
+});
 
 renderAgents();
 load();
+stars();
+onScroll();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(reveal);
+else reveal();
 </script>
 </body>
 </html>

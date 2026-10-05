@@ -267,14 +267,14 @@
     ]
   },
   "acceleration": {
-    "agentic_wall_clock_s": 3.28,
+    "agentic_wall_clock_s": 3.275,
     "serial_baseline_wall_clock_s": 4260.0,
     "compounds_screened": 60,
-    "candidates_per_hour_agentic": 65853.7,
+    "candidates_per_hour_agentic": 65954.2,
     "candidates_per_hour_serial": 50.7,
-    "measured_speedup_x": 1298.8,
+    "measured_speedup_x": 1300.8,
     "hypotheses_tested": 4,
-    "hypotheses_a_day": 105366,
+    "hypotheses_a_day": 105527,
     "baseline_model": {
       "method": "per-compound serial desk-work estimate, anchored to a manual spreadsheet triage; stated as a range, not a claim of measured human time",
       "per_compound_seconds": {

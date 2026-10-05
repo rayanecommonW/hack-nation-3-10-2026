@@ -35,14 +35,15 @@ if _ROOT not in sys.path:
 
 from lab import service  # noqa: E402
 
+# Single-page site. The dashboard and demo video pages are gone; everything a
+# visitor needs is on the front page. The JSON endpoints stay so any figure on
+# the page can be traced back to the record that produced it.
 STATIC = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/index.html": ("index.html", "text/html; charset=utf-8"),
-    "/dashboard": ("demo/index.html", "text/html; charset=utf-8"),
     "/results": ("evidence/results.json", "application/json"),
     "/citations": ("evidence/citations.json", "application/json"),
     "/record": ("research_record.json", "application/json"),
-    "/demo/pqs-lab-demo.mp4": ("demo/pqs-lab-demo.mp4", "video/mp4"),
 }
 
 SECURITY = [
@@ -53,8 +54,10 @@ SECURITY = [
     ("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
     ("Content-Security-Policy",
      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
-     "connect-src 'self'; img-src 'self' data:; media-src 'self'; frame-ancestors 'none'; "
-     "base-uri 'none'; form-action 'self'"),
+     # api.github.com is the single third-party origin, used only to read the
+     # public star count. The page degrades to no badge if the call fails.
+     "connect-src 'self' https://api.github.com; img-src 'self' data:; media-src 'self'; "
+     "frame-ancestors 'none'; base-uri 'none'; form-action 'self'"),
 ]
 
 
@@ -86,8 +89,7 @@ def app(environ, start_response):
 
     # The Vercel build emits a path-preserving catch-all rewrite to this WSGI
     # app (src "/(.*)" -> dest "/python"), so any path reaches us intact.
-    # Vercel also reserves /api/* for serverless functions; /lab is the
-    # endpoint. The header and query forms are accepted as fallbacks.
+    # Vercel reserves /api/* for serverless functions, so the endpoint is /lab.
     _wants_lab = (
         path in ("/lab", "/lab/", "/api/lab", "/api/lab/")
         or environ.get("HTTP_X_LAB", "") == "1"

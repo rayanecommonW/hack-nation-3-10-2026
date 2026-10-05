@@ -1,268 +1,209 @@
-# PQS Lab — an agentic scientific-discovery lab
+# truthfully
 
-**Databricks Omnigent challenge — "Agentic Scientific Discovery", Hack Nation 3 Oct 2026**
+An agentic AI run for scientific discovery. Six AI agents screened 60 approved drugs against the chemical signal bacteria use
+to organise an infection, and narrowed the list to the 7 most worth testing.
 
-An AI lab that runs one closed discovery loop over a real scientific question,
-orchestrated by [Omnigent](https://github.com/omnigent-ai/omnigent), and shows
-where the loop actually changed the next decision.
+Two of the four ideas they tried were wrong, and both are reported here as
+failures rather than left out.
 
-**Video:** `demo/pqs-lab-demo.mp4` · **Live dashboard:** `demo/index.html`
+**Nothing was tested in a laboratory.** No compound was measured against real
+bacteria. Whether any of them actually blocks the signal is unknown. The output
+is a shortlist for someone with a lab bench to pick up, not a discovery.
+
+Built for the Databricks Omnigent challenge at Hack Nation, 3 October 2026.
+Runs entirely on your own computer. No account, no API key, no cloud.
+
+**Live:** https://hack-nation-3-10-2026.vercel.app
+
+```bash
+git clone https://github.com/rayanecommonW/hack-nation-3-10-2026.git
+cd hack-nation-3-10-2026
+python3 -m venv .venv && ./.venv/bin/pip install rdkit
+./.venv/bin/python -m lab.orchestrator      # re-runs the whole discovery loop
+./.venv/bin/python scripts/devserver.py 8899  # browse it at localhost:8899
+```
+
+No account, no API key, no cloud account. RDKit is the only dependency, and it
+runs on your machine.
 
 ---
 
-## The question
+## The question, in plain terms
 
-> Which FDA-approved drugs can directly quench the *P. aeruginosa* quorum-sensing
-> signal 3-oxo-C12-homoserine lactone (PQS), and how many candidates can this lab
-> screen per hour compared with a serial manual triage?
+Bacteria do not attack alone. *Pseudomonas aeruginosa*, which causes lung
+infections in people with weakened lungs, releases a chemical signal that tells
+its own cells to switch on the genes that cause damage. Biologists call this
+process **quorum sensing**. The signal is a molecule called **PQS**.
 
-Why this question. Quorum sensing is how *P. aeruginosa* coordinates virulence.
-Quenching the signal is attractive because an anti-virulence agent does not act on
-the bacterial growth machinery, so it is not expected to select for antibiotic
-resistance the way a conventional antibiotic does. That expectation is a
-**hypothesis**, not a fact, and the lab says so.
+A drug that blocked PQS would leave the bacteria unable to organise the attack.
+This is more interesting than an antibiotic, which kills bacteria and therefore
+creates selection pressure for resistance. A drug that only blocks the signal is
+expected not to create that pressure.
 
-## What the lab found
+That expectation is a theory, not an established fact, and testing it needs real
+laboratory work this project has not done.
 
-Four experiments, two of them refutations, and a decision that changed twice.
+## What happened
+
+Four different ideas about what makes a drug block PQS were tested. The first two
+did not survive. "Refuted" below means the idea failed its own stated test.
 
 | # | Hypothesis | Gate | Verdict | Recall | Specificity | AUC |
 |---|---|---|---|---|---|---|
-| 1 | **H1** 2D fingerprint proximity to PQS | systemic | **REFUTED** | 0.00 | 1.00 | 0.77 |
-| 2 | **H2** cationic-amphiphile property space | systemic | **REFUTED** | 0.13 | 1.00 | 0.71 |
-| 3 | **H3** two-mechanism ensemble | systemic | **SUPPORTED** | 0.63 | 1.00 | 1.00 |
-| 4 | **H3** two-mechanism ensemble | surface-agent | **SUPPORTED** | **0.75** | **1.00** | **1.00** |
-
-**The loop, and where it turned.**
-
-1. **H1 fails, hard.** The obvious drug-repurposing screen ranks candidates by 2D
-   Tanimoto similarity to PQS. PQS is a 12-carbon aliphatic lactone. *Nothing* in a
-   60-compound approved-drug panel reaches even 0.20 similarity — the gate retains
-   **zero** candidates. A fingerprint screen cannot express "hydrophobic and basic",
-   which is the actual property that matters here.
-2. **The lab reopens the assumption.** The critic flags that an empty result with
-   AUC 0.77 is not a null result — it is a *tool* failure. The mechanism the
-   literature points at is that PQS is secreted as a surface-active micellar
-   species, so quenching it is a **physicochemical** problem, not a shape-matching
-   problem. Hypothesis 2 replaces proximity with cationic-amphiphile property space.
-3. **H2 gets direction but not recall.** Chlorhexidine — the strongest documented
-   anti-biofilm agent in the panel — rises to rank 1, but chloroquine-class
-   distractors outrank the macrolides that actually have published sub-MIC QS
-   activity. Recall 0.13 is unusable. Verdict: INCONCLUSIVE/REFUTED.
-4. **H3 is the synthesis.** Two mechanisms, not one: *A* surface sequestration
-   (the H2 term) and *B* direct perturbation of QS gene expression, a literature
-   prior over macrolide / tetracycline / lincoside / fluoroquinolone / aminoglycoside
-   / cationic-dye / bisbiguanide classes. Recall 0.63, specificity 1.00, AUC 1.00.
-5. **The gate, not the ranking, was still binding.** The strongest documented
-   anti-QS agent is chlorhexidine, MW 505 — it *fails* the textbook Lipinski rule of
-   500. But a topical antiseptic that acts on a bacterial surface is not required to
-   be a systemic drug. Re-running with a surface-agent gate admits it and recovers the
-   last two positives: **recall 0.75, specificity 1.00**.
+| 1 | **H1** fingerprint proximity to PQS | systemic | REFUTED | 0.00 | 1.00 | 0.77 |
+| 2 | **H2** cationic-amphiphile property space | systemic | REFUTED | 0.13 | 1.00 | 0.71 |
+| 3 | **H3** two-mechanism ensemble | systemic | SUPPORTED | 0.63 | 1.00 | 1.00 |
+| 4 | **H3** two-mechanism ensemble | surface agent | **SUPPORTED** | **0.75** | **1.00** | **1.00** |
 
 Accepted shortlist: chlorhexidine, moxifloxacin, levofloxacin, ofloxacin,
 ciprofloxacin, norfloxacin, alexidine, clindamycin.
 
+### Where it turned
+
+**Idea 1 returned nothing, and that is not a real answer.** The standard approach
+ranks drugs by how closely their chemical shape resembles PQS. PQS is a simple
+chain of twelve carbons, and nothing in the panel looks like it. Zero drugs passed.
+But the ranking still ordered the known cases better than chance, which is the
+signature of the *filter* failing rather than the *idea* failing.
+
+**So the assumption was reopened.** PQS is released as a slippery, fat-loving
+molecule that mixes with surfactants. Blocking it is therefore a question about
+physical properties, not shape. Idea 2 ranks by physical properties instead.
+
+**Idea 2 found the right drug but the wrong order.** Chlorhexidine, the strongest
+documented biofilm drug in the panel, rose to rank one. But drugs that interfere
+with the signal for unrelated reasons crowded out the antibiotics with real
+published evidence. Recall 0.13.
+
+**Idea 3 combined both.** Physical properties, plus credit for drug families already
+reported to disrupt this signalling. Recall 0.63, specificity 1.00.
+
+**Then the filter turned out to be the real constraint.** Chlorhexidine is slightly heavier than the
+molecular-weight cutoff normally applied to drugs meant to be swallowed. But a surgical
+antiseptic used on skin was never meant to be swallowed, so that limit did not
+apply. Removing it recovered the last two drugs.
+
+## What this does not show
+
+Read this before the numbers above, not after.
+
+- **Nothing was measured in a laboratory.** No compound was tested against real
+  bacteria. No docking, no binding value, no potency figure. Whether any of them
+  blocks the signal is unknown, and that is the only question that matters.
+- **The known cases were kept out of the ranking.** Eight drugs whose behaviour is
+  documented were scored only after the ranking was frozen. None is a feature, a
+  threshold or a weight. The critic agent is required to check this from the source
+  code on every run.
+- **Eight known cases is a small sample.** Six of eight is a useful sign, far too
+  small a number to treat as accuracy.
+- **Part of the score comes from published research, not data.** One term rewards
+  drug families already reported to interfere with this signal, and it decides most
+  of the outcome. Removing it takes the known cases found from six down to two.
+- **Sixty drugs, not the full library.** About sixteen hundred are approved. Sixty
+  were bundled in so the search runs identically with no internet access.
+- **The speed figure is about computing, not thinking.** It measures how fast
+  formulas run, not how good the reasoning is. One person could check a list this
+  size in an afternoon.
+- **The ideas are the system's own.** Nobody published these explanations or these
+  weights. They were generated during the run and are labelled as guesses.
+
+**Next step, held for human approval:** measure signal loss in live bacteria, with
+and without each candidate drug. That needs laboratory equipment, so no agent here
+is permitted to pretend it has been done.
+
 ## The agents
 
-Six specialist agents, each owning exactly one scientific decision. Orchestrated
-by Omnigent (`omnigent_lab/config.yaml`, ten agent specs in `omnigent_lab/agents/`).
+Six agents, each owning exactly one scientific decision. Orchestrated by
+[Omnigent](https://github.com/omnigent-ai/omnigent).
 
-```
-safety_agent       risk register + approval routing + veto  ──┐
-literature_agent   which facts are admissible              ──┤  (pubchem_agent,
-hypothesis_agent   pre-register falsifiable hypotheses       │   europepmc_agent,
-planner_agent      which competing test runs next, under     │   openalex_agent
-                   budget, with human-approval routing      │   run in parallel)
-screener_agent     produce the evidence, never interpret    │
-critic_agent       REFUTED / INCONCLUSIVE / SUPPORTED        │
-decision_agent     freeze the accepted result + next test  ──┘
-```
+An agent here is one AI role with a single job and a written rule about what it may
+not do. A framework called [Omnigent](https://github.com/omnigent-ai/omnigent) runs
+them.
 
-The loop runs `planner → screener → critic → planner` until the critic returns
-SUPPORTED or the budget is spent. Every handoff is a structured record with its own
-decision, tool list, payload and duration in `research_record.json`, so any decision
-in the report can be traced back to the handoff that made it.
-
-## What is *not* claimed
-
-Stated plainly, because the brief asks for uncertainty to be preserved:
-
-- **No molecular docking.** This is 2D structural proximity plus physicochemical
-  property screening. No binding affinity, no potency, no IC50.
-- **No wet-lab validation.** Direct PQS quenching is **unmeasured**. The screen
-  ranks candidates worth putting in a pipette next; it does not show any of them
-  works.
-- **The controls are held out.** Positive controls (8) and negative controls (6) are
-  scored *after* ranking is frozen. They are never features, never thresholds, never
-  used to fit a weight. `critic_agent` verifies this from the code on every run.
-- **Control set is small.** n=8 positives. Read the denominators, not the ratios.
-- **Mechanism B is a literature prior.** The leave-one-term-out ablation in
-  `evidence/results.json` reports how much of the signal that single term carries, so
-  a reader can discount it.
-- **The panel is ~60 compounds**, an embedded offline subset — not the full ~1,600
-  approved space.
-- **The 1375× speedup is honest but small-N.** At 60 compounds a human analyst takes
-  minutes. The transferable number is the scaling: **~70,000 compounds/hour**, and
-  **~1,700 pre-registered hypotheses per 24h**.
-
-## The measured acceleration
-
-| | agentic lab | serial manual triage |
+| Agent | Its one job | The rule it cannot break |
 |---|---|---|
-| compounds screened / hour | ~70,000 | ~51 |
-| hypotheses pre-registered / day | ~1,700 | ~3 |
+| `safety_agent` | Keeps the risk list, routes approvals | Can veto, and blocks claims that overstate the evidence |
+| `literature_agent` | Decides what counts as evidence | Rejects any claim without a link to its source |
+| `hypothesis_agent` | Writes explanations | Must state what would disprove it, before any data exists |
+| `planner_agent` | Chooses the next test | Anything over budget waits for a human |
+| `screener_agent` | Runs the test | Cannot return an opinion, only numbers |
+| `critic_agent` | Tries to prove the result wrong | Must check for leakage in the source before agreeing |
+| `decision_agent` | Accepts or rejects | Only accepts results that clear fixed thresholds |
 
-The speedup is dominated by descriptor computation and parallelism, not by model
-reasoning. That is stated in `evidence/results.json` rather than hidden, because it
-determines where the real 10× lives.
+Every handoff is written to `research_record.json` with its own inputs, outputs and
+duration, so any figure in the report traces back to the step that produced it.
 
-**What would actually reach 10×.** At 10⁴–10⁶ compounds the bottleneck stops being
-descriptor throughput and becomes (a) parallel descriptor batching on a Spark
-cluster — the natural fit for the managed Databricks route, where Omnigent routes
-through Foundation Model APIs and the sandbox runs the compute — and (b) swapping
-the 2D descriptors for a licensed 3D docking tier. At that scale the agentic loop
-amortises over many more candidate hypotheses per human hour.
+## How it works
 
-## Next experiment — blocked pending human approval
+1. **A person writes the question** and what would count as an answer, before
+   anything starts. No agent may change it.
+2. **Three agents search scientific databases** at once. Anything without a source
+   link is rejected, and the agents' own guesses are filed as guesses.
+3. **Three explanations are written down in advance,** each with the result that
+   would disprove it. Committing to these before data exists is what makes the two
+   failures later meaningful.
+4. **The planner picks a test** by expected learning over cost, inside budget.
+5. **The screener runs it** and returns numbers only, never an opinion.
+6. **The critic attacks it** against documented drugs and returns refuted,
+   inconclusive or supported. Back to step 4 until something survives.
+7. **The decision agent accepts or rejects** and writes the next experiment.
 
-**Luciferase-based PQS quenching assay**, ± candidate, at sub-MIC, against PAO1 and
-an isogenic *lasI*⁻ mutant.
+## Where things live
 
-- **Why:** the current result is a physicochemical ranking with no direct binding
-  evidence. The discriminating measurement is direct signal depletion.
-- **Falsifier:** no candidate reduces PQS-mediated LasR reporter activity at
-  concentrations below the MIC.
-- **Status:** AWAITING HUMAN APPROVAL. Wet-lab work is out of scope for this run. The
-  safety agent routes it and does not let any agent simulate having done it.
+The science and the orchestration are separate on purpose, so the drug search can be
+re-run and checked without an AI framework in the loop.
 
-## Governance
-
-| | |
+| Path | What it is |
 |---|---|
-| Human approvals exercised | 0 (nothing in this run crossed the $3.00 threshold) |
-| Risk flags raised | 5 (overclaim, control leakage, p-hacking, translation, dual-use) |
-| Session budget cap | $5.00 · actual spend $0.22 |
-| Hypotheses pre-registered | 3, before any result existed |
+| `lab/screening.py` | The drug search: three ideas, two filters, the known-case tests |
+| `lab/orchestrator.py` | The loop: agents, budget, handoffs, approval gate |
+| `lab/service.py` | The read-only JSON endpoint the website calls |
+| `omnigent_lab/` | Agent definitions, one file per role |
+| `index.py` | A small web server: routing, headers, static files |
+| `evidence/results.json` | Every number in the report |
+| `evidence/citations.json` | Every claim mapped to a DOI or PubChem ID |
 
-Two of the four experiments are refutations and both are in the report. A lab that
-only reports successes has not run an experiment.
+## Notes for anyone reading the code
 
-## Deployment
+**The orchestrator has two drivers.** The Omnigent specs in `omnigent_lab/` describe
+the agents for live use. `lab/orchestrator.py` executes the identical decision logic
+deterministically with no model in the path, so the recorded result is reproducible
+and the demo cannot fail on a flaky API.
 
-**Live:** https://hack-nation-3-10-2026.vercel.app
+**The screen runs in a child process.** RDKit is imported inside
+`lab/service_worker.py` and launched with `close_fds=True`. If the chemistry engine
+ever crashes, it takes down a subprocess instead of the web process, and the service
+falls back to the committed run.
 
-Deployed on Vercel as a Python WSGI application (`index.py` → `lab/service.py`).
+**RDKit is not deployed.** It is 265 MB unpacked against Vercel's 250 MB serverless
+function limit, and when a build overshoots Vercel drops the entire function while
+the site still serves, so the failure only shows up when you call the API. The
+deployed service therefore answers from `evidence/results.json`. Clone the repo and
+`python -m lab.orchestrator` recomputes it, and both paths produce the same figures.
 
-### Bring your own key — there is no server-side secret
+**The WSGI handler sets almost no headers.** An earlier version set
+`Content-Length` itself, which the WSGI server also sets, and Chrome rejects a
+response carrying that header twice. Let the server own it.
 
-The deployed service reads **no** environment variable for any model credential.
-There is no key in this repository and none in the Vercel project's environment.
+**Fonts are self-hosted.** Latin and Latin Extended subsets only, 440 KB after
+collapsing the variable-font duplicates. Self-hosted because the Content Security
+Policy has no third-party origins, and a font CDN would have meant either weakening
+the policy or leaving readers on a silent fallback face.
 
-The science runs with **no key at all**. If a visitor wants an LLM-written
-principal-investigator briefing, they paste their own key. The credential then:
-
-- travels in the **POST body**, never a header, never a URL — Vercel's request
-  logs capture method/path/status, not bodies;
-- is used for exactly one upstream Mistral call and then discarded;
-- is never written to disk, never persisted, never returned to the client;
-- lives in `sessionStorage` in the browser, so closing the tab erases it.
-
-`lab/service.py` maintains a redaction list and scrubs anything key-shaped out of
-every response and error string, and the handler sets `credential_echoed` so the
-property is observable rather than asserted.
-
-### What Vercel changed, and what it did not
-
-| | |
-|---|---|
-| Deployment Protection | **off** — no login in front of the demo |
-| Security headers | CSP, `X-Frame-Options: DENY`, `nosniff`, `no-referrer`, HSTS, `Permissions-Policy` |
-| Path traversal | blocked (`..` rejected in the static handler) |
-| Function size | 124 KB |
-| **Science engine** | **RDKit removed from the deploy** |
-
-**RDKit cannot ship to Vercel.** It is 265 MB unpacked, over the 250 MB serverless
-function limit, and Vercel silently drops the whole function when a build exceeds
-it — the site still serves, but the backend is gone and you only find out at
-runtime. So `pyproject.toml` declares **zero runtime dependencies** and the
-deployed service answers from the committed, verified run in
-`evidence/results.json`: the same numbers `python -m lab.orchestrator` produces.
-The page labels the source as `frozen-run` rather than claiming a live
-recomputation.
-
-RDKit stays in the repo and runs locally, which is where the four experiments are
-actually executed. `lab/service_worker.py` still exists for that path: it runs the
-screens in a child process under a hard timeout, so if RDKit is ever installed
-server-side, a segfault becomes a clean fallback instead of a dead worker.
-
-Three platform details that cost real time and are worth knowing:
-
-1. A Python file inside `api/` makes the build ambiguous — Vercel switches to the
-   serverless-function builder and the WSGI app is never mounted. The entrypoint
-   must live at the repository root.
-2. `vercel.json` `rewrites` rewrite `PATH_INFO` before the app sees it, which
-   breaks any path the app handles itself. This project uses none.
-3. `ssoProtection` must be nulled via the API (`PATCH /v9/projects/{id}`); the
-   CLI has no flag for it, and leaving it on puts a Vercel login in front of the
-   submission.
-
-### Verify the deployment yourself
-
-```bash
-U=https://hack-nation-3-10-2026.vercel.app
-for p in "" dashboard lab citations results record demo/pqs-lab-demo.mp4; do
-  printf "%-24s -> " "/$p"; curl -s -o /dev/null -w "%{http_code}\n" "$U/$p"
-done
-curl -s "$U/lab" | python3 -m json.tool | head -20
-curl -sI "$U/" | grep -iE "content-security|x-frame"
-```
-
-## Run it
-
-```bash
-python3 -m venv .venv && ./.venv/bin/pip install rdkit
-./.venv/bin/python -m lab.orchestrator     # runs the loop, writes the record + results
-./.venv/bin/python scripts/build_report.py # renders demo/index.html from the results
-./.venv/bin/python -m http.server 8899 --directory demo
-```
-
-To run the agents live under Omnigent instead of the deterministic replay:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/omnigent-ai/omnigent/main/scripts/install_oss.sh | sh
-omni run ./omnigent_lab/ -p "Run one closed discovery loop on the PQS question."
-```
-
-For managed Databricks, uncomment the `databricks-*` model block in
-`omnigent_lab/config.yaml` and set `DATABRICKS_HOST` / `DATABRICKS_TOKEN`.
-
-## Layout
-
-```
-omnigent_lab/           Omnigent agent specs — 1 orchestrator + 9 specialist agents
-  config.yaml           the orchestrator: loop protocol, budget + approval policies
-  agents/*/config.yaml  one per agent: its decision, its tools, its prohibitions
-lab/
-  screening.py          the experiment: 3 pre-registered hypotheses, controls, gates
-  orchestrator.py       the loop: agents, handoffs, research record, approval gate
-evidence/
-  citations.json        every claim → a locator. Limitations listed explicitly.
-  results.json          full rankings, controls, sensitivity, ablation, timing
-research_record.json    append-only: every handoff, belief update and approval event
-scripts/build_report.py generates the dashboard from results.json
-demo/                   pqs-lab-demo.mp4 + index.html
-```
+**The dev server uses waitress, not wsgiref.** `wsgiref` serialises requests and
+mis-frames the response body when the handler forks a subprocess, which presents as
+the page receiving headers and then an empty body.
 
 ## Sources
 
-Full provenance in `evidence/citations.json`. Key ones:
+Full provenance with limitations in `evidence/citations.json`.
 
-- PQS identity — PubChem CID 5282906
-- PQS as a surface-active, phase-separated species — Mukherjee et al., *Science* 2018; Srinivasan et al., *PNAS* 2019; Dietrich et al., *Sci Adv* 2020
-- Sub-MIC macrolide / tetracycline QS inhibition — Wozniak & Swift 2003; Lim et al. *AAC* 2007
-- Bisbiguanide anti-biofilm — Worthington et al., *J. Appl. Microbiol.* 2012
-- Gates and fingerprints — Lipinski et al. 2001; Rogers & Hahn 2010; Baell & Holloway 2010
-- Omnigent — `github.com/omnigent-ai/omnigent`
+- PQS identity: PubChem CID 5282906
+- PQS as a surface-active, phase-separated species: Mukherjee et al., *Science* 2018; Srinivasan et al., *PNAS* 2019; Dietrich et al., *Sci Adv* 2020
+- Sub-MIC macrolide and tetracycline quorum-sensing inhibition: Wozniak & Swift 2003; Lim et al., *AAC* 2007
+- Bisbiguanide anti-biofilm activity: Worthington et al., *J. Appl. Microbiol.* 2012
+- Gates and fingerprints: Lipinski et al. 2001; Rogers & Hahn 2010; Baell & Holloway 2010
+- Omnigent: `github.com/omnigent-ai/omnigent`
 
-All hypotheses, scoring weights, gates and control sets are **agent-generated** and
-labelled as such. They are not derived from any published model.
+All hypotheses, weights, gates and control sets are agent-generated and labelled as
+hypotheses. They are not derived from any published model.

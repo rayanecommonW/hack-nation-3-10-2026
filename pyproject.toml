@@ -1,7 +1,7 @@
 [project]
 name = "pqs-lab"
 version = "0.1.0"
-description = "Omnigent-orchestrated agentic scientific discovery lab. Bring-your-own-key; no server-side secrets."
+description = "Agentic AI for scientific discovery: six AI agents screen approved drugs, orchestrated with Databricks Omnigent."
 requires-python = ">=3.12"
 # NO runtime dependencies, deliberately.
 #
@@ -13,6 +13,10 @@ requires-python = ">=3.12"
 # locally. See README "Deployment".
 dependencies = []
 
+[project.optional-dependencies]
+# Preview server only. The deployed function needs nothing.
+dev = ["waitress"]
+
 [tool.vercel]
 entrypoint = "index:app"
 # Vercel only bundles files it can trace from imports. These are data files the
@@ -23,8 +27,6 @@ include = [
   "assets/fonts/*.woff2",
   "evidence/results.json",
   "evidence/citations.json",
-  "demo/index.html",
-  "demo/pqs-lab-demo.mp4",
   "research_record.json",
   "lab/screening.py",
   "lab/service_worker.py",
